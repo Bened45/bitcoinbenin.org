@@ -1,87 +1,44 @@
 'use client';
 
-import { PARTNERS } from '../data';
-import { motion, easeOut } from 'framer-motion';
 import Image from 'next/image';
+import Link from 'next/link';
+import Button from './ui/Button';
+import { PARTNERS } from '../data';
 
 export default function Partners() {
-  const partners = PARTNERS;
-
-  const sectionVariants = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.1 } },
-  };
-
-  const titleVariants = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOut } },
-  };
-
-  const logoGridVariants = {
-    hidden: {},
-    show: { transition: { staggerChildren: 0.1 } },
-  };
-
-  const logoVariants = {
-    hidden: { opacity: 0, scale: 0.5 },
-    show: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: easeOut } },
-  };
-
   return (
-    <motion.section 
-      className="bg-gradient-to-br from-[#F5F9F6] to-[#E8F5E9] py-24 sm:py-32"
-      initial="hidden"
-      whileInView="show"
-      viewport={{ once: true, amount: 0.2 }}
-      variants={sectionVariants}
-    >
-      <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        <motion.div 
-          className="mx-auto max-w-2xl text-center w-full"
-          variants={titleVariants}
-        >
-          <h2 className="text-4xl font-bold tracking-tight text-[#0A0F0C] sm:text-5xl text-center w-full mb-4">
-            Nos partenaires & soutiens
-          </h2>
-          <p className="mt-6 text-lg leading-8 text-gray-600 text-center w-full max-w-3xl mx-auto">
-            Nous collaborons avec des acteurs de l’écosystème Bitcoin, des universités et
-            des communautés locales pour promouvoir l’adoption du Bitcoin au Bénin.
-          </p>
-        </motion.div>
-        <motion.div 
-          className="mx-auto mt-16 flex flex-wrap justify-center items-center gap-12"
-          variants={logoGridVariants}
-        >
-          {partners.map((partner) => (
-            <motion.div 
-              key={partner.logo} 
-              className="flex flex-col items-center justify-center w-40 sm:w-48"
-              variants={logoVariants}
-            >
-              <div className="flex items-center justify-center w-full h-20">
-                <Image 
-                  src={partner.logo} 
-                  alt={`${(partner.name ?? partner.logo.split('/').pop()?.replace(/\.[^/.]+$/, '') ?? 'partner')} logo`}
-                  width={140}
-                  height={80}
-                  className="object-contain w-auto h-auto max-w-full max-h-full"
-                />
-              </div>
-            </motion.div>
+    <section className="py-20 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6 text-center">
+        <p className="text-sm font-semibold text-gray-500 uppercase tracking-widest mb-10">
+          Ils nous soutiennent
+        </p>
+
+        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-20 opacity-60 grayscale hover:grayscale-0 transition-all duration-500 mb-16">
+          {PARTNERS.map((partner, index) => (
+            <div key={index} className="relative h-12 w-40 hover:opacity-100 transition-opacity hover:drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+              <Image
+                src={partner.logo}
+                alt={partner.name}
+                fill
+                className="object-contain filter invert brightness-0 hover:invert-0 hover:brightness-100 transition-all duration-300"
+              />
+            </div>
           ))}
-        </motion.div>
-        <motion.div 
-          className="mt-20 text-center w-full"
-          variants={titleVariants}
-        >
-          <a
-            href="/partenaires"
-            className="btn-primary-green text-white font-bold py-4 px-8 rounded-xl text-lg transform hover:scale-105 transition-all duration-300 inline-block mx-auto shadow-lg hover:shadow-xl"
-          >
-            Devenir partenaire
-          </a>
-        </motion.div>
+        </div>
+
+        <div className="rounded-3xl p-8 md:p-12 border border-white/10 bg-brand-charcoal/40 backdrop-blur-md max-w-4xl mx-auto shadow-glass relative overflow-hidden">
+          {/* Glow Effect */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-brand-orange/10 blur-[80px] rounded-full pointer-events-none"></div>
+
+          <h3 className="text-2xl font-bold text-white mb-4 relative z-10">Envie de soutenir notre initiative ?</h3>
+          <p className="text-gray-400 mb-8 relative z-10">
+            Participez au développement de l&apos;écosystème Bitcoin au Bénin en devenant partenaire.
+          </p>
+          <Link href="/nous-soutenir" className="relative z-10">
+            <Button variant="primary">Faire un don</Button>
+          </Link>
+        </div>
       </div>
-    </motion.section>
+    </section>
   );
 }

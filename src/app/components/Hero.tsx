@@ -1,53 +1,69 @@
-import WaveTransition from './WaveTransition';
+'use client';
+
+import { motion } from 'framer-motion';
+import Button from './ui/Button';
 import Image from 'next/image';
 
 export default function Hero() {
   return (
-    <section className="relative text-white pt-32 pb-48 md:pt-40 md:pb-56 flex items-center justify-center">
-      {/* Background image optimisée */}
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden pt-20">
+      {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <Image
           src="/hero.png"
-          alt="Hero background"
+          alt="Bitcoin Benin Hero Background"
           fill
-          style={{ objectFit: 'cover', objectPosition: 'center' }}
+          className="object-cover opacity-20"
           priority
-          quality={85}
         />
+        <div className="absolute inset-0 bg-gradient-to-b from-brand-dark/90 via-brand-dark/80 to-brand-dark"></div>
       </div>
-      
-      {/* Overlay */}
-      <div className="absolute inset-0 bg-hero-gradient-dark opacity-90 z-10"></div>
 
-      <div className="relative z-20 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center w-full">
-        {/* Text and Buttons */}
-        <div className="flex flex-col gap-8 items-center justify-center w-full">
-          <h1 className="text-5xl md:text-6xl font-extrabold tracking-tighter animate-fade-in-up text-center w-full">
-            Rejoignez la communauté Bitcoin Béninoise
+      {/* Background Ambience Simple */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-brand-green/10 blur-[100px] rounded-full pointer-events-none z-0"></div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+        >
+          <h1 className="text-5xl md:text-7xl font-display font-black tracking-tight text-white mb-6">
+            L&apos;avenir de la finance <br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-brand-accent drop-shadow-lg">
+              se construit ici.
+            </span>
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto text-center animate-fade-in-up delay-100 w-full">
-            Découvrez, apprenez et développez l&apos;écosystème{' '}
-            <span className="text-orange-bitcoin font-semibold">Bitcoin</span> au Bénin.
+
+          <p className="mt-6 max-w-2xl mx-auto text-xl text-gray-400 leading-relaxed">
+            Rejoignez la première communauté dédiée à l&apos;éducation, l&apos;adoption et le développement de l&apos;écosystème Bitcoin au Bénin.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 mt-4 justify-center animate-fade-in-up delay-200 w-full">
-            <a
-              href="/rejoindre"
-              className="btn-primary-orange text-white font-bold py-4 px-8 rounded-lg text-lg hover:shadow-orange-glow transition-all duration-300 transform hover:scale-105 animate-pulse-green mx-2"
-            >
-              Rejoindre la communauté
-            </a>
-            <a
-              href="/nous-soutenir"
-              className="btn-secondary-outline text-white font-bold py-4 px-8 rounded-lg text-lg transform hover:scale-105 transition-all duration-300 mx-2"
-            >
-              Nous soutenir
-            </a>
+
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Button variant="primary" size="lg" onClick={() => window.open('https://t.me/+vUzohmB0EFMzZTI8', '_blank')}>
+              Rejoindre la Communauté
+            </Button>
+            <Button variant="secondary" size="lg" onClick={() => window.location.href = '/NosRessources'}>
+              Explorer les Ressources
+            </Button>
           </div>
+        </motion.div>
+
+        {/* Metrics */}
+        <div className="mt-20 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
+          {[
+            { label: 'Membres', value: '500+' },
+            { label: 'Meetups', value: '20+' },
+            { label: 'Projets', value: '10+' },
+            { label: 'Partenaires', value: '5+' },
+          ].map((stat, i) => (
+            <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md text-center group hover:bg-white/10 transition-all duration-300">
+              <div className="text-3xl font-display font-black text-white mb-1 group-hover:text-brand-green transition-colors">{stat.value}</div>
+              <div className="text-xs text-gray-500 uppercase tracking-wider">{stat.label}</div>
+            </div>
+          ))}
         </div>
       </div>
-
-      {/* Wave Transition to next section */}
-      <WaveTransition />
     </section>
   );
 }

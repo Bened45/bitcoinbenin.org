@@ -14,7 +14,7 @@ export const MISSIONS = [
     title: 'Éducation',
     description: 'Organisez dans votre école, votre université ou avec votre BDE une conférence ou un atelier en partenariat avec Bitcoin Bénin.',
     buttonText: 'Accéder',
-    href: '/rejoindre',
+    href: '#',
   },
   {
     icon: FaShoppingCart,
@@ -27,10 +27,8 @@ export const MISSIONS = [
 
 // Partners Data
 export const PARTNERS = [
-  { name: 'Trezor Academy', logo: '/partners/TrezorAcademy.png' },
-  { name: 'Plan B Network', logo: '/partners/planb-network.png' },
-  { name: 'Flash', logo: '/partners/Flash.png' },
-  { name: 'BMM', logo: '/partners/BMM.png' },
+  { name: 'Trezor', logo: '/partners/trezor.svg' },
+  { name: 'Plan ₿ Network', logo: '/partners/planb-network.png' },
 ];
 
 // Navigation Links Data
@@ -39,17 +37,17 @@ export const NAV_LINKS = [
   { name: ' Evènements', href: '/events' },
   { name: ' Soutenir', href: '/nous-soutenir' },
   { name: ' Ressources', href: '/NosRessources' },
-  { name: ' Galerie', href: '/galerie' },
+  { name: ' Galerie', href: '/gallery' },
   { name: 'Accepter Bitcoin', href: '/accepter-bitcoin' },
 ];
 
 // Social Links Data
 export const SOCIAL_LINKS = [
-  { icon: FaTelegramPlane, href: 'https://t.me/+vUzohmB0EFMzZTI8' },
-  { icon: FaTwitter, href: 'https://x.com/BitcoinBenin' },
-  { icon: FaEnvelope, href: ' bitcoinbenin@gmail.com' },
-  { icon: FaLinkedin, href: 'https://www.linkedin.com/company/bitcoinbenin/' },
-  { icon: FaFacebook, href: 'https://www.facebook.com/BitcoinBenin' },
+  { name: 'Telegram', icon: FaTelegramPlane, href: 'https://t.me/+vUzohmB0EFMzZTI8' },
+  { name: 'Twitter', icon: FaTwitter, href: 'https://x.com/BitcoinBenin' },
+  { name: 'Email', icon: FaEnvelope, href: 'mailto:benedoffice@gmail.com' }, // Fixed mailto protocol while at it
+  { name: 'LinkedIn', icon: FaLinkedin, href: 'https://www.linkedin.com/company/bitcoinbenin/' },
+  { name: 'Facebook', icon: FaFacebook, href: 'https://www.facebook.com/BitcoinBenin' },
 ];
 
 // Events Data
@@ -72,7 +70,7 @@ export const EVENTS = [
     iconLocation: FaMapMarkerAlt,
     iconArrowRight: FaArrowRight,
   },
-  
+
   {
     id: 4,
     title: 'Atelier Lightning Network (Passé)',

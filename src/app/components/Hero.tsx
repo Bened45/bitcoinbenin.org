@@ -55,7 +55,7 @@ export default function Hero() {
             { label: 'Membres', value: '500+' },
             { label: 'Meetups', value: '20+' },
             { label: 'Projets', value: '10+' },
-            { label: 'Partenaires', value: '5+' },
+            { label: 'Partenaires', value: '4+' },
           ].map((stat, i) => (
             <div key={i} className="p-6 rounded-2xl bg-white/5 border border-white/5 backdrop-blur-md text-center group hover:bg-white/10 transition-all duration-300">
               <div className="text-3xl font-display font-black text-white mb-1 group-hover:text-brand-green transition-colors">{stat.value}</div>

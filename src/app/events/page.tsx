@@ -234,7 +234,7 @@ export default function EventsPage() {
             </h1>
             
             {/* Sous-titre */}
-            <p className="text-lg md:text-xl lg:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed mb-12 backdrop-blur-sm">
+            <p className="text-lg md:text-xl lg:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed mb-12 ">
               Rejoignez-nous pour des meetups, ateliers et conférences sur Bitcoin. 
               Apprenez, échangez et développez vos connaissances avec notre communauté passionnée.
             </p>

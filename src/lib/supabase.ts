@@ -1,16 +1,19 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyDatabase = any
+
 // Client Supabase avec gestion d'erreurs
-let supabaseClient: ReturnType<typeof createClient> | null = null
-let supabaseAdminClient: ReturnType<typeof createClient> | null = null
+let supabaseClient: SupabaseClient<AnyDatabase> | null = null
+let supabaseAdminClient: SupabaseClient<AnyDatabase> | null = null
 
 try {
   if (supabaseUrl && supabaseAnonKey) {
-    supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+    supabaseClient = createClient<AnyDatabase>(supabaseUrl, supabaseAnonKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,
@@ -23,7 +26,7 @@ try {
 
 try {
   if (supabaseUrl && supabaseServiceKey) {
-    supabaseAdminClient = createClient(supabaseUrl, supabaseServiceKey, {
+    supabaseAdminClient = createClient<AnyDatabase>(supabaseUrl, supabaseServiceKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,

@@ -33,7 +33,7 @@ export async function createEvent(
 
   // Validation des champs requis
   console.log('🔍 Validation champs reçus:', { title, date, location });
-  
+
   if (!title || title === '') {
     throw new Error('Le titre est requis');
   }
@@ -49,7 +49,7 @@ export async function createEvent(
 
   try {
     let imageUrl: string | undefined = undefined;
-    
+
     // S'assurer que image est une chaîne simple
     if (image && typeof image === 'string') {
       imageUrl = image;
@@ -59,7 +59,7 @@ export async function createEvent(
     if (posterFile) {
       const fileExt = posterFile.name.split('.').pop();
       const fileName = `event-poster-${Date.now()}.${fileExt}`;
-      
+
       const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
         .from('gallery')
         .upload(`events/${fileName}`, posterFile);
@@ -71,7 +71,7 @@ export async function createEvent(
       const { data: { publicUrl } } = supabaseAdmin.storage
         .from('gallery')
         .getPublicUrl(uploadData.path);
-      
+
       imageUrl = publicUrl;
     }
 
@@ -119,7 +119,7 @@ export async function updateEvent(
 
   try {
     let imageUrl: string | undefined = undefined;
-    
+
     // S'assurer que image est une chaîne simple
     if (image && typeof image === 'string') {
       imageUrl = image;
@@ -129,7 +129,7 @@ export async function updateEvent(
     if (posterFile) {
       const fileExt = posterFile.name.split('.').pop();
       const fileName = `event-poster-${Date.now()}.${fileExt}`;
-      
+
       const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
         .from('gallery')
         .upload(`events/${fileName}`, posterFile);
@@ -141,7 +141,7 @@ export async function updateEvent(
       const { data: { publicUrl } } = supabaseAdmin.storage
         .from('gallery')
         .getPublicUrl(uploadData.path);
-      
+
       imageUrl = publicUrl;
     }
 
@@ -182,7 +182,7 @@ export async function deleteEvent(id: string) {
       .from('events')
       .delete()
       .eq('id', id);
-    
+
     if (error) {
       throw new Error(`Erreur suppression événement: ${error.message}`);
     }

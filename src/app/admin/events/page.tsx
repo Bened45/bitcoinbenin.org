@@ -50,7 +50,7 @@ export default function AdminEventsPage() {
 
   const fetchEvents = async () => {
     if (!supabase) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('events')
@@ -81,7 +81,7 @@ export default function AdminEventsPage() {
         setUploadingPoster(true);
         const fileExt = posterFile.name.split('.').pop();
         const fileName = `event-poster-${Date.now()}.${fileExt}`;
-        
+
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('gallery')
           .upload(`events/${fileName}`, posterFile);
@@ -95,7 +95,7 @@ export default function AdminEventsPage() {
         const { data: { publicUrl } } = supabase.storage
           .from('gallery')
           .getPublicUrl(uploadData.path);
-        
+
         imageUrl = publicUrl;
         setUploadingPoster(false);
       }
@@ -206,7 +206,7 @@ export default function AdminEventsPage() {
 
   const handleLogout = async () => {
     if (!supabase) return;
-    
+
     try {
       await supabase.auth.signOut();
       router.push('/login');
@@ -218,7 +218,7 @@ export default function AdminEventsPage() {
   // Séparer les événements passés et à venir
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Début de la journée
-  
+
   const upcomingEvents = events.filter(event => new Date(event.date) >= today);
   const pastEvents = events.filter(event => new Date(event.date) < today);
 
@@ -247,7 +247,7 @@ export default function AdminEventsPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
-            <Link 
+            <Link
               href="/admin/gallery"
               className="flex items-center gap-2 text-brand-green hover:text-brand-accent transition-colors"
             >
@@ -259,7 +259,7 @@ export default function AdminEventsPage() {
               Événements
             </h1>
           </div>
-          
+
           <Button
             variant="ghost"
             onClick={handleLogout}
@@ -307,14 +307,14 @@ export default function AdminEventsPage() {
                 onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               <input
                 type="date"
                 value={eventForm.date}
                 onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               <input
                 type="text"
                 placeholder="Heure (ex: 16h00 - 18h00)"
@@ -322,7 +322,7 @@ export default function AdminEventsPage() {
                 onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               <input
                 type="text"
                 placeholder="Lieu"
@@ -330,7 +330,7 @@ export default function AdminEventsPage() {
                 onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               <input
                 type="url"
                 placeholder="Lien Google Maps (optionnel)"
@@ -338,7 +338,7 @@ export default function AdminEventsPage() {
                 onChange={(e) => setEventForm({ ...eventForm, location_link: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               {/* Upload d'affiche */}
               <div className="md:col-span-2">
                 <label className="block text-white mb-2">Affiche de l&apos;événement</label>
@@ -376,7 +376,7 @@ export default function AdminEventsPage() {
                   </div>
                 )}
               </div>
-              
+
               <input
                 type="url"
                 placeholder="Lien inscription (optionnel)"
@@ -385,7 +385,7 @@ export default function AdminEventsPage() {
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
             </div>
-            
+
             <textarea
               placeholder="Description de l'événement"
               value={eventForm.description}
@@ -393,7 +393,7 @@ export default function AdminEventsPage() {
               className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green resize-none mb-6"
               rows={4}
             />
-            
+
             <div className="flex gap-3">
               <Button
                 variant="primary"
@@ -454,7 +454,7 @@ export default function AdminEventsPage() {
                           </div>
                           {event.registration_link && (
                             <div className="text-gray-500">
-                              <span className="text-brand-green">Inscription:</span> 
+                              <span className="text-brand-green">Inscription:</span>
                               <a href={event.registration_link} target="_blank" rel="noopener noreferrer" className="text-brand-green hover:text-brand-accent ml-1">
                                 Lien disponible
                               </a>
@@ -524,7 +524,7 @@ export default function AdminEventsPage() {
                           </div>
                           {event.registration_link && (
                             <div className="text-gray-600">
-                              <span className="text-gray-400">Inscription:</span> 
+                              <span className="text-gray-400">Inscription:</span>
                               <a href={event.registration_link} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 ml-1">
                                 Lien disponible
                               </a>

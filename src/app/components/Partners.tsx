@@ -35,7 +35,7 @@ export default function Partners() {
       {/* Background pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-dark via-brand-charcoal to-brand-dark opacity-50"></div>
       
-      <div className="relative z-10 mx-auto max-w-7xl px-6 lg:px-8">
+      <div className="relative z-10 w-full">
         <AnimatedWrapper
           variants={{
             hidden: { opacity: 0, y: 30 },
@@ -43,7 +43,7 @@ export default function Partners() {
           }}
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
-          <div className="mx-auto max-w-4xl text-center w-full">
+          <div className="mx-auto max-w-4xl text-center w-full px-6 lg:px-8">
             <motion.span 
               className="text-brand-green font-semibold tracking-wide uppercase text-sm mb-4 block inline-block"
               whileHover={{ scale: 1.05 }}
@@ -61,9 +61,9 @@ export default function Partners() {
           </div>
         </AnimatedWrapper>
 
-        <div className="mx-auto mt-20 w-full overflow-hidden">
+        <div className="mt-20 w-full overflow-hidden">
           <motion.div
-            className="flex w-max gap-8"
+            className="flex w-max gap-8 px-6 lg:px-8"
             variants={logoGridVariants}
             animate={prefersReducedMotion ? undefined : { x: ['0%', '-50%'] }}
             transition={
@@ -100,7 +100,7 @@ export default function Partners() {
           }}
           transition={{ duration: 0.8, delay: 0.3, ease: "easeOut" }}
         >
-          <div className="mt-20 text-center w-full">
+          <div className="mt-20 text-center w-full px-6 lg:px-8">
             <a
               href="/contact"
               className="inline-flex items-center justify-center bg-gradient-to-r from-brand-green to-brand-accent hover:from-brand-green-dark hover:to-brand-green text-white font-semibold px-9 py-4 rounded-lg shadow-lg hover:shadow-glow transform hover:scale-105 transition-all duration-300 text-base"

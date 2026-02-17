@@ -18,7 +18,7 @@ export default function StatistiquesPage() {
 
   return (
     <main className="bg-hero-gradient-dark text-white min-h-screen">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12">
         <div className="flex items-center mb-8">
           <Link 
             href="/communaute" 
@@ -31,7 +31,7 @@ export default function StatistiquesPage() {
           </Link>
         </div>
 
-        <div className="text-center mb-12">
+        <div className="text-center mb-16">
           <h1 className="text-3xl md:text-4xl font-bold mb-4 animate-fade-in">Statistiques de la Communauté</h1>
           <p className="text-lg text-gray-300 max-w-3xl mx-auto animate-fade-in-delay">
             Découvrez les chiffres clés de notre communauté Bitcoin Bénin
@@ -39,7 +39,7 @@ export default function StatistiquesPage() {
         </div>
 
         {/* Section des statistiques principales */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
           <div className="bg-black bg-opacity-30 rounded-xl p-6 text-center border border-gray-700 transform transition-all duration-500 hover:scale-105 hover:shadow-xl">
             <div className="flex justify-center">
               <AnimatedCounter target={150} suffix="+" />
@@ -66,7 +66,7 @@ export default function StatistiquesPage() {
         </div>
 
         {/* Section détaillée */}
-        <div className="bg-black bg-opacity-30 rounded-xl p-6 md:p-8 border border-gray-700 mb-12 transform transition-all duration-700 hover:shadow-2xl">
+        <div className="bg-black bg-opacity-30 rounded-xl p-6 md:p-8 border border-gray-700 mb-16 transform transition-all duration-700 hover:shadow-2xl">
           <h2 className="text-2xl font-bold mb-6 text-vert animate-fade-in">Nos Activités en Chiffres</h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-12">

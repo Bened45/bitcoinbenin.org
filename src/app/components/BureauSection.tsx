@@ -10,10 +10,10 @@ const membres = [
   { nom: "Abdoul Ouadoud", image: "/speaker17.3ac5cb2e.svg", linkedin: "", twitter: "https://bento.me/abdoul-ouadoud", facebook: "https://www.facebook.com/abdoulouadoud.bouraima" },
   { nom: "Ramane Boda", image: "/raman.jpg", linkedin: "https://www.linkedin.com/in/abdoul-rahamane-boda-78b829209?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", twitter: "https://x.com/Ramane_Boda?t=A6iRSZcqFvEpW1dAH2yryg&s=09", facebook: "https://www.facebook.com/Ramane.boda" },
   { nom: "Wilfried SOTODJI", image: "/will.jpeg", linkedin: "https://www.linkedin.com/in/wilfried-sotodji-42556a217?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/willy_btc", facebook: "https://www.facebook.com/MarxWilfriedS" },
+  { nom: "Béni-Christ Edaye Dokoui", image: "/beni.jpg", linkedin: "https://www.linkedin.com/in/mahougnon-b%C3%A9ni-christ-edaye-dokoui-254131336/", twitter: "https://x.com/BenedBTC", facebook: "https://www.facebook.com/beni.christ.edaye.dokoui.2025" },
   { nom: "Abdias Olaniran Afouda", image: "/abdias.svg", linkedin: "https://www.linkedin.com/in/abdias-afouda-06461022a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "x.com/heyolaniran", facebook: "https://www.facebook.com/laurentAb143" },
   { nom: "Joseph QUAYE", image: "/jo.jpeg", linkedin: "https://www.linkedin.com/in/joseph-quaye-1170041b1/", twitter: "https://x.com/Jobitcoiner", facebook: "https://www.facebook.com/" },
   { nom: "Marshal Dekon", image: "/marshal.jpeg", facebook: "https://www.facebook.com/romeo.ken.9659?mibextid=rS40aB7S9Ucbxw6v", twitter: "https://x.com/MarshalOS_btc" },
-  { nom: "Béni-Christ Edaye Dokoui", image: "/beni.jpg", linkedin: "https://www.linkedin.com/in/mahougnon-b%C3%A9ni-christ-edaye-dokoui-254131336/", twitter: "https://x.com/BenedBTC", facebook: "https://www.facebook.com/beni.christ.edaye.dokoui.2025" },
   { nom: "Carlos Adimou", image: "/carlos.jpeg", linkedin: "https://www.linkedin.com/in/carlos-adimou?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", twitter: "https://x.com/CarlAdm04?t=ElCMdZbrohO16J6UzWS13w&s=09" },
   { nom: "Geoffroy Acakpo", image: "/geo.jpg", linkedin: "https://www.linkedin.com/in/g%C3%A9offroy-acakpo-a12a77252?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", twitter: "https://x.com/iamgeoffroy", facebook: "https://www.facebook.com/share/1DKDaaJsR2/" },
 ];
@@ -51,7 +51,7 @@ export default function TeamSection() {
 
       {/* ✅ Titre Section */}
       <motion.div
-        className="max-w-7xl mx-auto w-full mb-16"
+        className="max-w-7xl mx-auto w-full mb-24"
         variants={titleVariants}
       >
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white text-center">
@@ -62,22 +62,22 @@ export default function TeamSection() {
 
       {/*  Grille des membres */}
       <motion.ul
-        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl w-full"
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl w-full"
         variants={gridVariants}
       >
         {membres.map((membre, index) => (
           <motion.li
             key={index}
-            className="group glass-panel rounded-2xl overflow-hidden border border-white/5 hover:bg-white/5 transition-all duration-300 hover:-translate-y-2"
+            className="group rounded-2xl overflow-hidden hover:bg-white/5 transition-all duration-300 hover:-translate-y-2"
             variants={cardVariants}
           >
             {/* Image */}
-            <div className="relative w-full h-72 overflow-hidden">
+            <div className="relative w-full h-80 overflow-hidden">
               <Image
                 src={membre.image}
                 alt={membre.nom}
                 fill
-                className="object-cover transition-transform duration-700 group-hover:scale-110"
+                className="object-cover object-top transition-transform duration-700 group-hover:scale-110"
                 priority={index < 4}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-transparent to-transparent opacity-80"></div>

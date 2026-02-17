@@ -25,7 +25,7 @@ export default function Partners() {
   };
 
   return (
-    <motion.section 
+    <motion.section
       className="bg-brand-dark py-24 sm:py-32 relative overflow-hidden"
       initial="hidden"
       whileInView="show"
@@ -34,7 +34,7 @@ export default function Partners() {
     >
       {/* Background pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-brand-dark via-brand-charcoal to-brand-dark opacity-50"></div>
-      
+
       <div className="relative z-10 w-full">
         <AnimatedWrapper
           variants={{
@@ -44,7 +44,7 @@ export default function Partners() {
           transition={{ duration: 0.8, ease: "easeOut" }}
         >
           <div className="mx-auto max-w-4xl text-center w-full px-6 lg:px-8">
-            <motion.span 
+            <motion.span
               className="text-brand-green font-semibold tracking-wide uppercase text-sm mb-4 block inline-block"
               whileHover={{ scale: 1.05 }}
               transition={{ stiffness: 400 }}
@@ -65,14 +65,14 @@ export default function Partners() {
           <motion.div
             className="flex w-max gap-8 px-6 lg:px-8"
             variants={logoGridVariants}
-            animate={prefersReducedMotion ? undefined : { x: ['0%', '-50%'] }}
+            animate={prefersReducedMotion ? undefined : { x: ['0%', '-33.33%'] }}
             transition={
               prefersReducedMotion
                 ? undefined
                 : { duration: 25, ease: 'linear', repeat: Infinity }
             }
           >
-            {[...partners, ...partners].map((partner, idx) => (
+            {[...partners, ...partners, ...partners].map((partner, idx) => (
               <motion.div
                 key={`${partner.name}-${idx}`}
                 className="flex items-center justify-center p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 hover:border-brand-green/30 transition-all duration-500 transform hover:scale-105 group shrink-0"
@@ -80,8 +80,8 @@ export default function Partners() {
                 whileHover={{ y: -5 }}
               >
                 <div className="flex items-center justify-center w-44 h-20 bg-white/90 rounded-xl px-4 py-3">
-                  <Image 
-                    src={partner.logo} 
+                  <Image
+                    src={partner.logo}
                     alt={`${partner.name} logo`}
                     width={140}
                     height={80}

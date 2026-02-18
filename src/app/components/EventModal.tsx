@@ -238,7 +238,7 @@ export default function EventModal({ isOpen, onClose, onDontShowAgain, featuredE
                   onClick={() => featuredEvent?.registration_url && window.open(featuredEvent.registration_url, '_blank')}
                   className="w-full bg-gradient-to-r from-brand-orange to-brand-accent text-white font-bold py-3 px-6 rounded-lg hover:shadow-lg transition-all duration-300"
                 >
-                   S'inscrire maintenant
+                   S&apos;inscrire maintenant
                 </motion.button>
 
                 <div className="flex gap-3">

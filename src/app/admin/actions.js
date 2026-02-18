@@ -158,7 +158,7 @@ export async function addImageToGallery(file, albumId) {
     const filePath = `gallery/${fileName}`;
 
     // Upload du fichier
-    const { data: _uploadData, error: uploadError } = await supabaseAdmin.storage
+    const { error: uploadError } = await supabaseAdmin.storage
       .from('gallery')
       .upload(filePath, file);
 

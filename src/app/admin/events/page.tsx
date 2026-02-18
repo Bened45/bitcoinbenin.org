@@ -267,9 +267,10 @@ export default function AdminEventsPage() {
       fetchFeaturedEvents();
       
       alert('Événement vedette sauvegardé avec succès !');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erreur sauvegarde événement vedette:', error);
-      alert(`Erreur lors de la sauvegarde: ${error.message || 'Erreur inconnue'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      alert(`Erreur lors de la sauvegarde: ${errorMessage}`);
     }
   };
 
@@ -721,7 +722,7 @@ export default function AdminEventsPage() {
           {showFeaturedForm && (
             <div className="bg-brand-dark/50 border border-white/10 rounded-xl p-6 mb-6">
               <h3 className="text-xl font-bold text-white mb-4">
-                {editingFeatured ? 'Modifier l\'événement vedette' : 'Nouvel événement vedette'}
+                {editingFeatured ? 'Modifier l&apos;événement vedette' : 'Nouvel événement vedette'}
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -778,7 +779,7 @@ export default function AdminEventsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">URL d'inscription</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">URL d&apos;inscription</label>
                   <input
                     type="url"
                     value={featuredForm.registration_url}

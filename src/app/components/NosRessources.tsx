@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
 export default function NosRessources() {
   return (
@@ -40,12 +39,14 @@ export default function NosRessources() {
               NOTRE CHAÎNE YOUTUBE
             </a>
 
-            <Link
-              href="/CommunityRegle"
+            <a
+              href="https://www.linkedin.com/company/bitcoin-b%C3%A9nin"
+              target="_blank"
+              rel="noopener noreferrer"
               className="px-8 py-4 rounded-full font-bold text-white border border-white/10 bg-white/5 hover:bg-white/10 hover:border-brand-orange/50 transition-all duration-300 text-center"
             >
               ENTRER EN CONTACT
-            </Link>
+            </a>
           </div>
         </div>
 

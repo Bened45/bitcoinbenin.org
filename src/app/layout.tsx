@@ -1,29 +1,9 @@
 import type { Metadata } from "next";
-import { Inter, Orbitron, JetBrains_Mono } from "next/font/google";
 import Script from 'next/script';
 import Header from "./components/Header";
 import Footer from "./components/Footer";
 import AccessibilityPreferences from "./components/AccessibilityPreferences";
 import "./globals.css";
-
-const inter = Inter({ 
-  subsets: ["latin"], 
-  variable: '--font-inter',
-  display: 'optional',
-  preload: true
-});
-const orbitron = Orbitron({ 
-  subsets: ["latin"], 
-  variable: '--font-orbitron', 
-  display: 'optional',
-  preload: false
-});
-const jetbrainsMono = JetBrains_Mono({ 
-  subsets: ["latin"], 
-  variable: '--font-jetbrains-mono', 
-  display: 'optional',
-  preload: false
-});
 
 export const metadata: Metadata = {
   title: {
@@ -91,7 +71,7 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body className={`${inter.variable} ${orbitron.variable} ${jetbrainsMono.variable} font-sans bg-brand-dark text-gray-300 antialiased selection:bg-brand-green selection:text-white overflow-x-hidden`} style={{ fontFamily: 'system-ui, -apple-system, sans-serif' }}>
+      <body className="font-sans bg-brand-dark text-gray-300 antialiased selection:bg-brand-green selection:text-white overflow-x-hidden" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
         <Script
           id="structured-data"
           type="application/ld+json"

@@ -6,6 +6,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/app/components/ui/Button';
 import { FaCalendarAlt, FaPlus, FaEdit, FaTrash, FaSave, FaTimes, FaArrowLeft, FaSignOutAlt } from 'react-icons/fa';
+import { getAllFeaturedEvents } from '@/app/lib/events';
+import { FeaturedEvent } from '@/app/types/events';
 
 interface Event {
   id: string;
@@ -23,9 +25,12 @@ interface Event {
 
 export default function AdminEventsPage() {
   const [events, setEvents] = useState<Event[]>([]);
+  const [featuredEvents, setFeaturedEvents] = useState<FeaturedEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [showEventForm, setShowEventForm] = useState(false);
+  const [showFeaturedForm, setShowFeaturedForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [editingFeatured, setEditingFeatured] = useState<FeaturedEvent | null>(null);
   const [eventForm, setEventForm] = useState({
     title: '',
     description: '',
@@ -35,6 +40,15 @@ export default function AdminEventsPage() {
     location_link: '',
     image: '',
     registration_link: ''
+  });
+  const [featuredForm, setFeaturedForm] = useState({
+    title: '',
+    description: '',
+    start_date: '',
+    end_date: '',
+    location: '',
+    registration_url: '',
+    is_active: true
   });
   const [posterFile, setPosterFile] = useState<File | null>(null);
   const [uploadingPoster, setUploadingPoster] = useState(false);
@@ -46,11 +60,25 @@ export default function AdminEventsPage() {
       return;
     }
     fetchEvents();
+    fetchFeaturedEvents();
   }, []);
+
+  const fetchFeaturedEvents = async () => {
+    if (!supabase) return;
+
+    try {
+      console.log('Chargement événements vedettes depuis l\'admin...');
+      const events = await getAllFeaturedEvents();
+      console.log('Événements reçus:', events);
+      setFeaturedEvents(events);
+    } catch (error) {
+      console.error('Erreur chargement événements vedettes:', error);
+    }
+  };
 
   const fetchEvents = async () => {
     if (!supabase) return;
-    
+
     try {
       const { data, error } = await supabase
         .from('events')
@@ -81,7 +109,7 @@ export default function AdminEventsPage() {
         setUploadingPoster(true);
         const fileExt = posterFile.name.split('.').pop();
         const fileName = `event-poster-${Date.now()}.${fileExt}`;
-        
+
         const { data: uploadData, error: uploadError } = await supabase.storage
           .from('gallery')
           .upload(`events/${fileName}`, posterFile);
@@ -95,7 +123,7 @@ export default function AdminEventsPage() {
         const { data: { publicUrl } } = supabase.storage
           .from('gallery')
           .getPublicUrl(uploadData.path);
-        
+
         imageUrl = publicUrl;
         setUploadingPoster(false);
       }
@@ -173,6 +201,110 @@ export default function AdminEventsPage() {
     }
   };
 
+  // Fonctions pour gérer les événements vedettes
+  const handleSaveFeatured = async () => {
+    if (!supabase) return;
+
+    try {
+      // Validation des champs requis
+      if (!featuredForm.title || !featuredForm.location || !featuredForm.start_date) {
+        alert('Veuillez remplir tous les champs obligatoires (titre, lieu, date début)');
+        return;
+      }
+
+      const eventData = {
+        title: featuredForm.title,
+        description: featuredForm.description || null,
+        start_date: featuredForm.start_date,
+        end_date: featuredForm.end_date || null,
+        location: featuredForm.location,
+        registration_url: featuredForm.registration_url || null,
+        is_active: featuredForm.is_active
+      };
+
+      console.log('Données à sauvegarder:', eventData);
+
+      let result;
+      if (editingFeatured) {
+        result = await supabase
+          .from('featured_events')
+          .update({
+            ...eventData,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', editingFeatured.id);
+      } else {
+        result = await supabase
+          .from('featured_events')
+          .insert({
+            ...eventData,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString()
+          });
+      }
+
+      console.log('Résultat Supabase:', result);
+
+      if (result.error) {
+        console.error('Erreur Supabase:', result.error);
+        throw new Error(result.error.message || 'Erreur inconnue');
+      }
+
+      // Réinitialiser le formulaire
+      setFeaturedForm({
+        title: '',
+        description: '',
+        start_date: '',
+        end_date: '',
+        location: '',
+        registration_url: '',
+        is_active: true
+      });
+      setShowFeaturedForm(false);
+      setEditingFeatured(null);
+      
+      // Recharger les événements
+      fetchFeaturedEvents();
+      
+      alert('Événement vedette sauvegardé avec succès !');
+    } catch (error: any) {
+      console.error('Erreur sauvegarde événement vedette:', error);
+      alert(`Erreur lors de la sauvegarde: ${error.message || 'Erreur inconnue'}`);
+    }
+  };
+
+  const handleEditFeatured = (event: FeaturedEvent) => {
+    setFeaturedForm({
+      title: event.title,
+      description: event.description || '',
+      start_date: event.start_date,
+      end_date: event.end_date || '',
+      location: event.location,
+      registration_url: event.registration_url || '',
+      is_active: event.is_active
+    });
+    setEditingFeatured(event);
+    setShowFeaturedForm(true);
+  };
+
+  const handleDeleteFeatured = async (id: string) => {
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cet événement vedette ?')) return;
+    if (!supabase) return;
+
+    try {
+      const { error } = await supabase
+        .from('featured_events')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+      fetchFeaturedEvents();
+    } catch (error) {
+      console.error('Erreur suppression événement vedette:', error);
+      alert('Erreur lors de la suppression');
+    }
+  };
+
   const resetEventForm = () => {
     setEventForm({
       title: '',
@@ -206,7 +338,7 @@ export default function AdminEventsPage() {
 
   const handleLogout = async () => {
     if (!supabase) return;
-    
+
     try {
       await supabase.auth.signOut();
       router.push('/login');
@@ -218,7 +350,7 @@ export default function AdminEventsPage() {
   // Séparer les événements passés et à venir
   const today = new Date();
   today.setHours(0, 0, 0, 0); // Début de la journée
-  
+
   const upcomingEvents = events.filter(event => new Date(event.date) >= today);
   const pastEvents = events.filter(event => new Date(event.date) < today);
 
@@ -247,7 +379,7 @@ export default function AdminEventsPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
-            <Link 
+            <Link
               href="/admin/gallery"
               className="flex items-center gap-2 text-brand-green hover:text-brand-accent transition-colors"
             >
@@ -259,7 +391,7 @@ export default function AdminEventsPage() {
               Événements
             </h1>
           </div>
-          
+
           <Button
             variant="ghost"
             onClick={handleLogout}
@@ -307,14 +439,14 @@ export default function AdminEventsPage() {
                 onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               <input
                 type="date"
                 value={eventForm.date}
                 onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               <input
                 type="text"
                 placeholder="Heure (ex: 16h00 - 18h00)"
@@ -322,7 +454,7 @@ export default function AdminEventsPage() {
                 onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               <input
                 type="text"
                 placeholder="Lieu"
@@ -330,7 +462,7 @@ export default function AdminEventsPage() {
                 onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               <input
                 type="url"
                 placeholder="Lien Google Maps (optionnel)"
@@ -338,7 +470,7 @@ export default function AdminEventsPage() {
                 onChange={(e) => setEventForm({ ...eventForm, location_link: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
-              
+
               {/* Upload d'affiche */}
               <div className="md:col-span-2">
                 <label className="block text-white mb-2">Affiche de l&apos;événement</label>
@@ -376,7 +508,7 @@ export default function AdminEventsPage() {
                   </div>
                 )}
               </div>
-              
+
               <input
                 type="url"
                 placeholder="Lien inscription (optionnel)"
@@ -385,7 +517,7 @@ export default function AdminEventsPage() {
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
               />
             </div>
-            
+
             <textarea
               placeholder="Description de l'événement"
               value={eventForm.description}
@@ -393,7 +525,7 @@ export default function AdminEventsPage() {
               className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green resize-none mb-6"
               rows={4}
             />
-            
+
             <div className="flex gap-3">
               <Button
                 variant="primary"
@@ -454,7 +586,7 @@ export default function AdminEventsPage() {
                           </div>
                           {event.registration_link && (
                             <div className="text-gray-500">
-                              <span className="text-brand-green">Inscription:</span> 
+                              <span className="text-brand-green">Inscription:</span>
                               <a href={event.registration_link} target="_blank" rel="noopener noreferrer" className="text-brand-green hover:text-brand-accent ml-1">
                                 Lien disponible
                               </a>
@@ -524,7 +656,7 @@ export default function AdminEventsPage() {
                           </div>
                           {event.registration_link && (
                             <div className="text-gray-600">
-                              <span className="text-gray-400">Inscription:</span> 
+                              <span className="text-gray-400">Inscription:</span>
                               <a href={event.registration_link} target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-gray-300 ml-1">
                                 Lien disponible
                               </a>
@@ -556,6 +688,213 @@ export default function AdminEventsPage() {
               </div>
             )}
           </div>
+        </div>
+
+        {/* Section Événements Vedettes */}
+        <div className="bg-brand-charcoal rounded-xl p-6 mb-8">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-2xl font-display font-bold text-white flex items-center gap-2">
+              <FaCalendarAlt className="text-brand-orange" />
+              Événements Vedettes ({featuredEvents.length})
+            </h2>
+            <Button
+              onClick={() => {
+                setEditingFeatured(null);
+                setFeaturedForm({
+                  title: '',
+                  description: '',
+                  start_date: '',
+                  end_date: '',
+                  location: '',
+                  registration_url: '',
+                  is_active: true
+                });
+                setShowFeaturedForm(true);
+              }}
+              className="bg-brand-orange hover:bg-brand-orange/80"
+            >
+              <FaPlus className="mr-2" />
+              Nouvel événement vedette
+            </Button>
+          </div>
+
+          {showFeaturedForm && (
+            <div className="bg-brand-dark/50 border border-white/10 rounded-xl p-6 mb-6">
+              <h3 className="text-xl font-bold text-white mb-4">
+                {editingFeatured ? 'Modifier l\'événement vedette' : 'Nouvel événement vedette'}
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Titre</label>
+                  <input
+                    type="text"
+                    value={featuredForm.title}
+                    onChange={(e) => setFeaturedForm({...featuredForm, title: e.target.value})}
+                    className="w-full p-3 rounded-lg bg-brand-dark border border-white/10 text-white"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Lieu</label>
+                  <input
+                    type="text"
+                    value={featuredForm.location}
+                    onChange={(e) => setFeaturedForm({...featuredForm, location: e.target.value})}
+                    className="w-full p-3 rounded-lg bg-brand-dark border border-white/10 text-white"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Date de début</label>
+                  <input
+                    type="datetime-local"
+                    value={featuredForm.start_date}
+                    onChange={(e) => setFeaturedForm({...featuredForm, start_date: e.target.value})}
+                    className="w-full p-3 rounded-lg bg-brand-dark border border-white/10 text-white"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Date de fin</label>
+                  <input
+                    type="datetime-local"
+                    value={featuredForm.end_date}
+                    onChange={(e) => setFeaturedForm({...featuredForm, end_date: e.target.value})}
+                    className="w-full p-3 rounded-lg bg-brand-dark border border-white/10 text-white"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">Description</label>
+                  <textarea
+                    value={featuredForm.description}
+                    onChange={(e) => setFeaturedForm({...featuredForm, description: e.target.value})}
+                    className="w-full p-3 rounded-lg bg-brand-dark border border-white/10 text-white h-24"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-300 mb-2">URL d'inscription</label>
+                  <input
+                    type="url"
+                    value={featuredForm.registration_url}
+                    onChange={(e) => setFeaturedForm({...featuredForm, registration_url: e.target.value})}
+                    className="w-full p-3 rounded-lg bg-brand-dark border border-white/10 text-white"
+                    placeholder="https://..."
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <label className="flex items-center gap-2 text-gray-300">
+                    <input
+                      type="checkbox"
+                      checked={featuredForm.is_active}
+                      onChange={(e) => setFeaturedForm({...featuredForm, is_active: e.target.checked})}
+                      className="rounded"
+                    />
+                    <span className="text-sm font-medium">Événement actif</span>
+                  </label>
+                </div>
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  onClick={handleSaveFeatured}
+                  className="bg-brand-green hover:bg-brand-green/80"
+                >
+                  <FaSave className="mr-2" />
+                  {editingFeatured ? 'Mettre à jour' : 'Créer'}
+                </Button>
+                
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowFeaturedForm(false);
+                    setEditingFeatured(null);
+                  }}
+                >
+                  <FaTimes className="mr-2" />
+                  Annuler
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {featuredEvents.length === 0 ? (
+            <div className="bg-brand-dark/30 border border-white/5 rounded-xl p-8 text-center">
+              <p className="text-gray-400">Aucun événement vedette</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {featuredEvents.map((event) => (
+                <div
+                  key={event.id}
+                  className="bg-brand-dark/30 border border-white/5 rounded-xl p-6"
+                >
+                  <div className="flex justify-between items-start">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <h3 className="text-xl font-display font-bold text-white">
+                          {event.title}
+                        </h3>
+                        <span className={`px-2 py-1 rounded-full text-xs ${
+                          event.is_active ? 'bg-green-600 text-white' : 'bg-gray-600 text-gray-300'
+                        }`}>
+                          {event.is_active ? 'Actif' : 'Inactif'}
+                        </span>
+                      </div>
+                      
+                      <p className="text-gray-400 mb-2">{event.location}</p>
+                      
+                      <p className="text-gray-300 text-sm mb-2">
+                        {new Date(event.start_date).toLocaleDateString('fr-FR', {
+                          day: 'numeric',
+                          month: 'long',
+                          year: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                        {event.end_date && event.end_date !== event.start_date && (
+                          <> - {new Date(event.end_date).toLocaleDateString('fr-FR', {
+                            day: 'numeric',
+                            month: 'long',
+                            year: 'numeric'
+                          })}</>
+                        )}
+                      </p>
+                      
+                      {event.description && (
+                        <p className="text-gray-400 text-sm">{event.description}</p>
+                      )}
+                    </div>
+                    
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditFeatured(event)}
+                        className="p-2"
+                      >
+                        <FaEdit className="text-brand-green" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteFeatured(event.id)}
+                        className="p-2"
+                      >
+                        <FaTrash className="text-red-400" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>

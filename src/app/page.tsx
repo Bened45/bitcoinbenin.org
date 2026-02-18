@@ -1,10 +1,4 @@
-import Hero from "./components/Hero";
-import Mission from "./components/Mission";
-import JoinUs from "./components/JoinUs";
-import Testimonials from "./components/Testimonials";
-import GalleryPreview from "./components/GalleryPreview";
-import Partners from "./components/Partners";
-import { PageTransition } from "./components/Animations";
+import HomePage from "./components/HomePage";
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -13,14 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return (
-    <PageTransition>
-      <Hero />
-      <Mission />
-      <JoinUs />
-      <GalleryPreview />
-      <Testimonials />
-      <Partners />
-    </PageTransition>
-  );
+  return <HomePage />;
 }

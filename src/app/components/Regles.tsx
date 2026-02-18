@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Communautes() {
   return (
-    <section className="bg-anthracite text-white py-16 px-6">
+    <section className="bg-anthracite text-white py-24 px-6">
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16">
 
         {/* ✅ Bloc Telegram */}

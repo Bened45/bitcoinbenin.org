@@ -1,28 +1,44 @@
-import { createClient } from '@supabase/supabase-js'
+import { createClient, SupabaseClient } from '@supabase/supabase-js'
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
 
-// Vérification que les variables d'environnement sont disponibles
-export const supabase = supabaseUrl && supabaseAnonKey 
-  ? createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      }
-    })
-  : null
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyDatabase = any
 
-// Client admin pour les opérations serveur
-export const supabaseAdmin = supabaseUrl && supabaseServiceKey
-  ? createClient(supabaseUrl, supabaseServiceKey, {
+// Client Supabase avec gestion d'erreurs
+let supabaseClient: SupabaseClient<AnyDatabase> | null = null
+let supabaseAdminClient: SupabaseClient<AnyDatabase> | null = null
+
+try {
+  if (supabaseUrl && supabaseAnonKey) {
+    supabaseClient = createClient<AnyDatabase>(supabaseUrl, supabaseAnonKey, {
       auth: {
         persistSession: false,
         autoRefreshToken: false,
       }
     })
-  : null
+  }
+} catch (error) {
+  console.error('Erreur initialisation Supabase client:', error)
+}
+
+try {
+  if (supabaseUrl && supabaseServiceKey) {
+    supabaseAdminClient = createClient<AnyDatabase>(supabaseUrl, supabaseServiceKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      }
+    })
+  }
+} catch (error) {
+  console.error('Erreur initialisation Supabase admin:', error)
+}
+
+export const supabase = supabaseClient
+export const supabaseAdmin = supabaseAdminClient
 
 // Fonction pour nettoyer les sessions corrompues
 export const clearSupabaseSession = async () => {

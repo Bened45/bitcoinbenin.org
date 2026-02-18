@@ -6,7 +6,6 @@ import { useState, useEffect } from 'react';
 import { NAV_LINKS, SOCIAL_LINKS } from '../data';
 import { FaBars, FaTimes } from 'react-icons/fa';
 import Button from './ui/Button';
-import TopBanner from './TopBanner';
 import { usePathname } from 'next/navigation';
 
 
@@ -94,11 +93,6 @@ export default function Header() {
         >
           {isMenuOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
         </button>
-      </div>
-
-      {/* TopBanner Positioned Below Navbar */}
-      <div className="flex justify-center mt-3 relative z-40">
-        <TopBanner />
       </div>
 
       {/* Mobile Menu Overlay */}

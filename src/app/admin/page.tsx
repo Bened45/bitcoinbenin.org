@@ -339,7 +339,7 @@ export default function AdminDashboard() {
               </p>
               <Button
                 variant="primary"
-                onClick={() => window.location.href = '/admin/gallery'}
+                onClick={() => router.push('/admin/gallery')}
                 className="inline-flex items-center gap-2"
               >
                 <FaImages />
@@ -358,7 +358,7 @@ export default function AdminDashboard() {
               </p>
               <Button
                 variant="primary"
-                onClick={() => (window.location.href = '/admin/events')}
+                onClick={() => router.push('/admin/events')}
                 className="inline-flex items-center gap-2"
               >
                 <FaCalendarAlt />

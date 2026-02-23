@@ -167,7 +167,7 @@ export default function AdminEventsPage() {
         setShowEventForm(false);
         setEditingEvent(null);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erreur:', error);
       setUploadingPoster(false);
     }

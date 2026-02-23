@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     images: [
       {
-        url: '/8543eb7d1ba409ca6f0030d7180e88cd237fc221-1200x630-1-uai-720x540.jpg',
+        url: '/home.jpg',
         width: 1200,
         height: 630,
         alt: 'Bitcoin Bénin',
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Bitcoin Bénin - Communauté Bitcoin au Bénin',
     description: "Site officiel Bitcoin Bénin - Découvrez, apprenez et développez l'écosystème Bitcoin au Bénin.",
-    images: ['/8543eb7d1ba409ca6f0030d7180e88cd237fc221-1200x630-1-uai-720x540.jpg'],
+    images: ['/home.jpg'],
   },
 };
 

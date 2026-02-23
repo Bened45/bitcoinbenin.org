@@ -1,11 +1,11 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, supabaseAdmin } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/app/components/ui/Button';
-import { FaCalendarAlt, FaPlus, FaEdit, FaTrash, FaSave, FaTimes, FaArrowLeft, FaSignOutAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaPlus, FaEdit, FaTrash, FaSave, FaTimes, FaArrowLeft, FaSignOutAlt, FaEye } from 'react-icons/fa';
 import { getAllFeaturedEvents } from '@/app/lib/events';
 import { FeaturedEvent } from '@/app/types/events';
 
@@ -98,6 +98,10 @@ export default function AdminEventsPage() {
   };
 
   const createEvent = async () => {
+    if (!supabaseAdmin) {
+      alert('Erreur: Supabase admin n\'est pas configuré');
+      return;
+    }
     if (!supabase) return;
     if (!eventForm.title.trim()) return;
 
@@ -110,7 +114,7 @@ export default function AdminEventsPage() {
         const fileExt = posterFile.name.split('.').pop();
         const fileName = `event-poster-${Date.now()}.${fileExt}`;
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
+        const { data: uploadData, error: uploadError } = await supabaseAdmin.storage
           .from('gallery')
           .upload(`events/${fileName}`, posterFile);
 
@@ -120,7 +124,7 @@ export default function AdminEventsPage() {
           return;
         }
 
-        const { data: { publicUrl } } = supabase.storage
+        const { data: { publicUrl } } = supabaseAdmin.storage
           .from('gallery')
           .getPublicUrl(uploadData.path);
 
@@ -128,7 +132,7 @@ export default function AdminEventsPage() {
         setUploadingPoster(false);
       }
 
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('events')
         .insert({
           title: eventForm.title,
@@ -143,23 +147,37 @@ export default function AdminEventsPage() {
         .select()
         .single();
 
+      console.log('Résultat insertion:', { data, error });
+
       if (error) {
         console.error('Erreur lors de la création de l\'événement:', error);
+        alert(`Erreur: ${JSON.stringify(error) || 'Erreur inconnue lors de la création'}`);
       } else {
         setEvents([data, ...events]);
-        resetEventForm();
+        setEventForm({
+          title: '',
+          description: '',
+          date: '',
+          time: '',
+          location: '',
+          location_link: '',
+          image: '',
+          registration_link: ''
+        });
+        setShowEventForm(false);
+        setEditingEvent(null);
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Erreur:', error);
       setUploadingPoster(false);
     }
   };
 
   const updateEvent = async () => {
-    if (!supabase || !editingEvent) return;
+    if (!supabaseAdmin || !editingEvent) return;
 
     try {
-      const { data, error } = await supabase
+      const { data, error } = await supabaseAdmin
         .from('events')
         .update({
           title: eventForm.title,
@@ -187,10 +205,15 @@ export default function AdminEventsPage() {
   };
 
   const deleteEvent = async (eventId: string) => {
-    if (!supabase || !confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) return;
+    if (!supabaseAdmin) {
+      alert('Erreur: Supabase admin n\'est pas configuré');
+      return;
+    }
+
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) return;
 
     try {
-      await supabase
+      await supabaseAdmin
         .from('events')
         .delete()
         .eq('id', eventId);
@@ -596,6 +619,16 @@ export default function AdminEventsPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-4">
+                        <Link href={`/events/${event.id}`} target="_blank">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-2"
+                            title="Voir l'événement"
+                          >
+                            <FaEye className="text-brand-blue" />
+                          </Button>
+                        </Link>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -666,6 +699,16 @@ export default function AdminEventsPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-4">
+                        <Link href={`/events/${event.id}`} target="_blank">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-2"
+                            title="Voir l'événement"
+                          >
+                            <FaEye className="text-gray-400" />
+                          </Button>
+                        </Link>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -680,7 +723,7 @@ export default function AdminEventsPage() {
                           onClick={() => deleteEvent(event.id)}
                           className="p-2"
                         >
-                          <FaTrash className="text-red-400" />
+                          <FaTrash className="text-gray-400" />
                         </Button>
                       </div>
                     </div>

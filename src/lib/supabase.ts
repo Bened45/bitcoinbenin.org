@@ -38,7 +38,7 @@ try {
 }
 
 export const supabase = supabaseClient
-export const supabaseAdmin = supabaseAdminClient
+export const supabaseAdmin = supabaseAdminClient || supabaseClient
 
 // Fonction pour nettoyer les sessions corrompues
 export const clearSupabaseSession = async () => {

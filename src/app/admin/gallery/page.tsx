@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase, Album, GalleryImage } from '@/lib/supabase';
+import { supabase, Album, GalleryImage, clearSupabaseSession } from '@/lib/supabase';
+import { useRouter } from 'next/navigation';
 import { createAlbum as createAlbumAction, deleteAlbum as deleteAlbumAction, updateAlbumCover, setFirstImageAsCover } from '../actions';
 import ImageUploadWithActions from '@/app/components/ImageUploadWithActions';
 import ImageGalleryWithActions from '@/app/components/ImageGalleryWithActions';
 import Button from '@/app/components/ui/Button';
-import { FaPlus, FaTrash, FaImages, FaImage, FaStar } from 'react-icons/fa';
+import { FaPlus, FaTrash, FaImages, FaImage, FaStar, FaSignOutAlt } from 'react-icons/fa';
 
 export default function AdminGalleryPage() {
   const [albums, setAlbums] = useState<Album[]>([]);
@@ -15,14 +16,41 @@ export default function AdminGalleryPage() {
   const [showNewAlbumForm, setShowNewAlbumForm] = useState(false);
   const [newAlbum, setNewAlbum] = useState({ name: '', description: '' });
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
+    const init = async () => {
+      if (!supabase) {
+        setLoading(false);
+        router.replace('/login');
+        return;
+      }
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        setLoading(false);
+        router.replace('/login');
+        return;
+      }
+
+      fetchAlbums();
+    };
+
+    init();
+  }, [router]);
+
+  const handleLogout = async () => {
+    try {
+      await clearSupabaseSession();
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    } finally {
+      router.replace('/login');
     }
-    fetchAlbums();
-  }, []);
+  };
 
   const fetchAlbums = async () => {
     if (!supabase) return;
@@ -174,16 +202,27 @@ export default function AdminGalleryPage() {
     <div className="min-h-screen bg-brand-dark">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-5xl font-display font-black text-white mb-4">
-            Administration
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-brand-accent ml-2">
-              Gallery
-            </span>
-          </h1>
-          <p className="text-xl text-gray-400">
-            Gérez les albums et les photos de la communauté Bitcoin Bénin.
-          </p>
+        <div className="flex justify-between items-center mb-12">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-display font-black text-white mb-4">
+              Administration
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-green to-brand-accent ml-2">
+                Gallery
+              </span>
+            </h1>
+            <p className="text-xl text-gray-400">
+              Gérez les albums et les photos de la communauté Bitcoin Bénin.
+            </p>
+          </div>
+
+          <Button
+            variant="ghost"
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-gray-400 hover:text-red-400"
+          >
+            <FaSignOutAlt />
+            Déconnexion
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

@@ -1,13 +1,18 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, clearSupabaseSession } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/app/components/ui/Button';
-import { FaCalendarAlt, FaPlus, FaEdit, FaTrash, FaSave, FaTimes, FaArrowLeft, FaSignOutAlt } from 'react-icons/fa';
+import { FaCalendarAlt, FaPlus, FaEdit, FaTrash, FaSave, FaTimes, FaArrowLeft, FaSignOutAlt, FaEye } from 'react-icons/fa';
 import { getAllFeaturedEvents } from '@/app/lib/events';
 import { FeaturedEvent } from '@/app/types/events';
+import {
+  createEvent as createEventAction,
+  updateEvent as updateEventAction,
+  deleteEvent as deleteEventAction,
+} from '../event-actions';
 
 interface Event {
   id: string;
@@ -55,13 +60,29 @@ export default function AdminEventsPage() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-    fetchEvents();
-    fetchFeaturedEvents();
-  }, []);
+    const init = async () => {
+      if (!supabase) {
+        setLoading(false);
+        router.replace('/login');
+        return;
+      }
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        setLoading(false);
+        router.replace('/login');
+        return;
+      }
+
+      fetchEvents();
+      fetchFeaturedEvents();
+    };
+
+    init();
+  }, [router]);
 
   const fetchFeaturedEvents = async () => {
     if (!supabase) return;
@@ -98,106 +119,90 @@ export default function AdminEventsPage() {
   };
 
   const createEvent = async () => {
-    if (!supabase) return;
-    if (!eventForm.title.trim()) return;
+    const title = eventForm.title.trim();
+    const description = eventForm.description.trim();
+    const date = eventForm.date.trim();
+    const time = eventForm.time.trim();
+    const location = eventForm.location.trim();
+    const location_link = eventForm.location_link.trim() || undefined;
+    const image = eventForm.image.trim() || undefined;
+    const registration_link = eventForm.registration_link.trim() || undefined;
+
+    if (!title || !date || !location) {
+      alert('Merci de renseigner au minimum le titre, la date et le lieu.');
+      return;
+    }
 
     try {
-      let imageUrl = eventForm.image;
+      setUploadingPoster(true);
 
-      // Upload de l'affiche si un fichier est sélectionné
-      if (posterFile) {
-        setUploadingPoster(true);
-        const fileExt = posterFile.name.split('.').pop();
-        const fileName = `event-poster-${Date.now()}.${fileExt}`;
+      const result = await createEventAction(
+        title,
+        description,
+        date,
+        time,
+        location,
+        location_link,
+        image,
+        registration_link,
+        posterFile || undefined
+      );
 
-        const { data: uploadData, error: uploadError } = await supabase.storage
-          .from('gallery')
-          .upload(`events/${fileName}`, posterFile);
-
-        if (uploadError) {
-          console.error('Erreur upload affiche:', uploadError);
-          setUploadingPoster(false);
-          return;
-        }
-
-        const { data: { publicUrl } } = supabase.storage
-          .from('gallery')
-          .getPublicUrl(uploadData.path);
-
-        imageUrl = publicUrl;
-        setUploadingPoster(false);
-      }
-
-      const { data, error } = await supabase
-        .from('events')
-        .insert({
-          title: eventForm.title,
-          description: eventForm.description,
-          date: eventForm.date,
-          time: eventForm.time,
-          location: eventForm.location,
-          location_link: eventForm.location_link,
-          image: imageUrl,
-          registration_link: eventForm.registration_link
-        })
-        .select()
-        .single();
-
-      if (error) {
-        console.error('Erreur lors de la création de l\'événement:', error);
-      } else {
-        setEvents([data, ...events]);
+      if (result.success) {
+        setEvents([result.data, ...events]);
         resetEventForm();
       }
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur lors de la création de l\'événement:', error);
+      alert('Erreur lors de la création de l\'événement');
+    } finally {
       setUploadingPoster(false);
     }
   };
 
   const updateEvent = async () => {
-    if (!supabase || !editingEvent) return;
+    if (!editingEvent) return;
 
     try {
-      const { data, error } = await supabase
-        .from('events')
-        .update({
-          title: eventForm.title,
-          description: eventForm.description,
-          date: eventForm.date,
-          time: eventForm.time,
-          location: eventForm.location,
-          location_link: eventForm.location_link,
-          image: eventForm.image,
-          registration_link: eventForm.registration_link
-        })
-        .eq('id', editingEvent.id)
-        .select()
-        .single();
+      setUploadingPoster(true);
 
-      if (error) {
-        console.error('Erreur lors de la mise à jour de l\'événement:', error);
-      } else {
-        setEvents(events.map(e => e.id === editingEvent.id ? data : e));
+      const result = await updateEventAction(
+        editingEvent.id,
+        String(eventForm.title),
+        String(eventForm.description),
+        String(eventForm.date),
+        String(eventForm.time),
+        String(eventForm.location),
+        eventForm.location_link ? String(eventForm.location_link) : undefined,
+        eventForm.image ? String(eventForm.image) : undefined,
+        eventForm.registration_link ? String(eventForm.registration_link) : undefined,
+        posterFile || undefined
+      );
+
+      if (result.success) {
+        setEvents(events.map(e => e.id === editingEvent.id ? result.data : e));
         resetEventForm();
       }
     } catch (error) {
-      console.error('Erreur:', error);
+      console.error('Erreur lors de la mise à jour de l\'événement:', error);
+      alert('Erreur lors de la mise à jour de l\'événement');
+    } finally {
+      setUploadingPoster(false);
     }
   };
 
   const deleteEvent = async (eventId: string) => {
-    if (!supabase || !confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) return;
+    if (!confirm('Êtes-vous sûr de vouloir supprimer cet événement ?')) return;
 
     try {
-      await supabase
-        .from('events')
-        .delete()
-        .eq('id', eventId);
+      const result = await deleteEventAction(eventId);
 
-      setEvents(events.filter(e => e.id !== eventId));
+      if (result.success) {
+        setEvents(events.filter(e => e.id !== eventId));
+      }
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'événement:', error);
+      alert('Erreur lors de la suppression de l\'événement');
     }
   };
 
@@ -267,9 +272,10 @@ export default function AdminEventsPage() {
       fetchFeaturedEvents();
       
       alert('Événement vedette sauvegardé avec succès !');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Erreur sauvegarde événement vedette:', error);
-      alert(`Erreur lors de la sauvegarde: ${error.message || 'Erreur inconnue'}`);
+      const errorMessage = error instanceof Error ? error.message : 'Erreur inconnue';
+      alert(`Erreur lors de la sauvegarde: ${errorMessage}`);
     }
   };
 
@@ -337,13 +343,12 @@ export default function AdminEventsPage() {
   };
 
   const handleLogout = async () => {
-    if (!supabase) return;
-
     try {
-      await supabase.auth.signOut();
-      router.push('/login');
+      await clearSupabaseSession();
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
+    } finally {
+      router.replace('/login');
     }
   };
 
@@ -380,7 +385,7 @@ export default function AdminEventsPage() {
         <div className="flex justify-between items-center mb-8">
           <div className="flex items-center gap-3">
             <Link
-              href="/admin/gallery"
+              href="/admin"
               className="flex items-center gap-2 text-brand-green hover:text-brand-accent transition-colors"
             >
               <FaArrowLeft />
@@ -434,7 +439,6 @@ export default function AdminEventsPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="text"
-                placeholder="Titre de l'événement"
                 value={eventForm.title}
                 onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
@@ -449,7 +453,6 @@ export default function AdminEventsPage() {
 
               <input
                 type="text"
-                placeholder="Heure (ex: 16h00 - 18h00)"
                 value={eventForm.time}
                 onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
@@ -457,7 +460,6 @@ export default function AdminEventsPage() {
 
               <input
                 type="text"
-                placeholder="Lieu"
                 value={eventForm.location}
                 onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
@@ -465,7 +467,6 @@ export default function AdminEventsPage() {
 
               <input
                 type="url"
-                placeholder="Lien Google Maps (optionnel)"
                 value={eventForm.location_link}
                 onChange={(e) => setEventForm({ ...eventForm, location_link: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
@@ -511,7 +512,6 @@ export default function AdminEventsPage() {
 
               <input
                 type="url"
-                placeholder="Lien inscription (optionnel)"
                 value={eventForm.registration_link}
                 onChange={(e) => setEventForm({ ...eventForm, registration_link: e.target.value })}
                 className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
@@ -519,7 +519,6 @@ export default function AdminEventsPage() {
             </div>
 
             <textarea
-              placeholder="Description de l'événement"
               value={eventForm.description}
               onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
               className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green resize-none mb-6"
@@ -595,6 +594,16 @@ export default function AdminEventsPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-4">
+                        <Link href={`/events/${event.id}`} target="_blank">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-2"
+                            title="Voir l'événement"
+                          >
+                            <FaEye className="text-brand-blue" />
+                          </Button>
+                        </Link>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -665,6 +674,16 @@ export default function AdminEventsPage() {
                         </div>
                       </div>
                       <div className="flex items-center gap-2 ml-4">
+                        <Link href={`/events/${event.id}`} target="_blank">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="p-2"
+                            title="Voir l'événement"
+                          >
+                            <FaEye className="text-gray-400" />
+                          </Button>
+                        </Link>
                         <Button
                           variant="ghost"
                           size="sm"
@@ -679,7 +698,7 @@ export default function AdminEventsPage() {
                           onClick={() => deleteEvent(event.id)}
                           className="p-2"
                         >
-                          <FaTrash className="text-red-400" />
+                          <FaTrash className="text-gray-400" />
                         </Button>
                       </div>
                     </div>
@@ -721,7 +740,7 @@ export default function AdminEventsPage() {
           {showFeaturedForm && (
             <div className="bg-brand-dark/50 border border-white/10 rounded-xl p-6 mb-6">
               <h3 className="text-xl font-bold text-white mb-4">
-                {editingFeatured ? 'Modifier l\'événement vedette' : 'Nouvel événement vedette'}
+                {editingFeatured ? 'Modifier l&apos;événement vedette' : 'Nouvel événement vedette'}
               </h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
@@ -778,7 +797,7 @@ export default function AdminEventsPage() {
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">URL d'inscription</label>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">URL d&apos;inscription</label>
                   <input
                     type="url"
                     value={featuredForm.registration_url}

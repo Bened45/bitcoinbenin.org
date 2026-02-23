@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
-import Script from 'next/script';
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Script from "next/script";
 import AccessibilityPreferences from "./components/AccessibilityPreferences";
+import LayoutShell from "./components/LayoutShell";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
     locale: 'fr_FR',
     images: [
       {
-        url: '/8543eb7d1ba409ca6f0030d7180e88cd237fc221-1200x630-1-uai-720x540.jpg',
+        url: '/hero.png?v=2',
         width: 1200,
         height: 630,
         alt: 'Bitcoin Bénin',
@@ -36,7 +35,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Bitcoin Bénin - Communauté Bitcoin au Bénin',
     description: "Site officiel Bitcoin Bénin - Découvrez, apprenez et développez l'écosystème Bitcoin au Bénin.",
-    images: ['/8543eb7d1ba409ca6f0030d7180e88cd237fc221-1200x630-1-uai-720x540.jpg'],
+    images: ['/hero.png?v=2'],
   },
 };
 
@@ -100,15 +99,9 @@ export default function RootLayout({
         <div className="fixed inset-0 z-[-1] bg-premium-gradient"></div>
         <div className="fixed top-0 left-0 w-full h-[500px] bg-brand-green/5 blur-[120px] rounded-full translate-y-[-50%] pointer-events-none opacity-40"></div>
 
-        <div className="relative flex min-h-screen flex-col">
-          {/* <TopBanner />  Preserve if needed, but maybe hide for "Pure Tech" look? keeping for now */}
-          {/* TopBanner moved to Header */}
-          <Header />
-          <main className="flex-grow">
-            {children}
-          </main>
-          <Footer />
-        </div>
+        <LayoutShell>
+          {children}
+        </LayoutShell>
         <AccessibilityPreferences />
       </body>
     </html>

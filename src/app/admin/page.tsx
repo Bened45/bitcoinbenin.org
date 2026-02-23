@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '@/lib/supabase';
+import { supabase, clearSupabaseSession } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 import Button from '@/app/components/ui/Button';
 import { FaImages, FaCalendarAlt, FaPlus, FaEdit, FaTrash, FaSave, FaTimes, FaSignOutAlt } from 'react-icons/fa';
@@ -42,21 +42,36 @@ export default function AdminDashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!supabase) {
-      setLoading(false);
-      return;
-    }
-    fetchEvents();
-  }, []);
+    const init = async () => {
+      if (!supabase) {
+        setLoading(false);
+        router.replace('/login');
+        return;
+      }
+
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+      if (!session) {
+        setLoading(false);
+        router.replace('/login');
+        return;
+      }
+
+      fetchEvents();
+    };
+
+    init();
+  }, [router]);
 
   const handleLogout = async () => {
-    if (!supabase) return;
-    
     try {
-      await supabase.auth.signOut();
-      router.push('/login');
+      await clearSupabaseSession();
     } catch (error) {
       console.error('Erreur lors de la déconnexion:', error);
+    } finally {
+      router.replace('/login');
     }
   };
 
@@ -336,211 +351,19 @@ export default function AdminDashboard() {
 
         {activeTab === 'events' && (
           <div>
-            {/* Header événements */}
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-2xl font-display font-bold text-white flex items-center gap-2">
-                <FaCalendarAlt />
-                Événements
-              </h2>
+            <div className="bg-brand-charcoal/50 border border-white/5 rounded-xl p-6 text-center">
+              <h2 className="text-2xl font-display font-bold text-white mb-4">Gestion des événements</h2>
+              <p className="text-gray-400 mb-6">
+                Accédez à l&apos;interface complète de gestion des événements.
+              </p>
               <Button
                 variant="primary"
-                onClick={() => setShowEventForm(true)}
-                className="flex items-center gap-2"
+                onClick={() => (window.location.href = '/admin/events')}
+                className="inline-flex items-center gap-2"
               >
-                <FaPlus />
-                Nouvel événement
+                <FaCalendarAlt />
+                Gérer les événements
               </Button>
-            </div>
-
-            {/* Formulaire événement */}
-            {showEventForm && (
-              <div className="bg-brand-charcoal/50 border border-white/5 rounded-xl p-6 mb-8">
-                <div className="flex justify-between items-center mb-6">
-                  <h3 className="text-xl font-display font-bold text-white">
-                    {editingEvent ? 'Modifier l\'événement' : 'Nouvel événement'}
-                  </h3>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={resetEventForm}
-                    className="p-2"
-                  >
-                    <FaTimes />
-                  </Button>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <input
-                    type="text"
-                    placeholder="Titre de l'événement"
-                    value={eventForm.title}
-                    onChange={(e) => setEventForm({ ...eventForm, title: e.target.value })}
-                    className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
-                  />
-                  
-                  <input
-                    type="date"
-                    value={eventForm.date}
-                    onChange={(e) => setEventForm({ ...eventForm, date: e.target.value })}
-                    className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
-                  />
-                  
-                  <input
-                    type="text"
-                    placeholder="Heure (ex: 16h00 - 18h00)"
-                    value={eventForm.time}
-                    onChange={(e) => setEventForm({ ...eventForm, time: e.target.value })}
-                    className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
-                  />
-                  
-                  <input
-                    type="text"
-                    placeholder="Lieu"
-                    value={eventForm.location}
-                    onChange={(e) => setEventForm({ ...eventForm, location: e.target.value })}
-                    className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
-                  />
-                  
-                  <input
-                    type="url"
-                    placeholder="Lien Google Maps (optionnel)"
-                    value={eventForm.location_link}
-                    onChange={(e) => setEventForm({ ...eventForm, location_link: e.target.value })}
-                    className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
-                  />
-                  
-                  {/* Upload d'affiche */}
-                  <div className="md:col-span-2">
-                    <label className="block text-white mb-2">Affiche de l&apos;événement</label>
-                    <div className="flex items-center gap-4">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => setPosterFile(e.target.files?.[0] || null)}
-                        className="hidden"
-                        id="poster-upload-admin"
-                      />
-                      <label
-                        htmlFor="poster-upload-admin"
-                        className="flex items-center gap-2 px-4 py-2 bg-brand-dark border border-white/10 text-gray-300 rounded-lg hover:border-brand-green/50 cursor-pointer transition-colors"
-                      >
-                        <FaPlus />
-                        {posterFile ? posterFile.name : 'Choisir une affiche'}
-                      </label>
-                      {posterFile && (
-                        <button
-                          type="button"
-                          onClick={() => setPosterFile(null)}
-                          className="px-3 py-2 bg-red-500/20 text-red-400 rounded-lg hover:bg-red-500/30 transition-colors"
-                        >
-                          <FaTimes />
-                        </button>
-                      )}
-                      {uploadingPoster && (
-                        <span className="text-brand-green">Upload en cours...</span>
-                      )}
-                    </div>
-                    {posterFile && (
-                      <div className="mt-2 text-sm text-gray-400">
-                        Aperçu : {posterFile.name} ({Math.round(posterFile.size / 1024)}KB)
-                      </div>
-                    )}
-                  </div>
-                  
-                  <input
-                    type="url"
-                    placeholder="Lien inscription (optionnel)"
-                    value={eventForm.registration_link}
-                    onChange={(e) => setEventForm({ ...eventForm, registration_link: e.target.value })}
-                    className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green"
-                  />
-                
-                <textarea
-                  placeholder="Description de l'événement"
-                  value={eventForm.description}
-                  onChange={(e) => setEventForm({ ...eventForm, description: e.target.value })}
-                  className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green resize-none mb-6"
-                  rows={4}
-                />
-                
-                <div className="flex gap-3">
-                  <Button
-                    variant="primary"
-                    onClick={editingEvent ? updateEventLocal : addEvent}
-                    disabled={!eventForm.title.trim() || uploadingPoster}
-                    className="flex items-center gap-2"
-                  >
-                    <FaSave />
-                    {uploadingPoster ? 'Upload en cours...' : (editingEvent ? 'Mettre à jour' : 'Créer')}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    onClick={resetEventForm}
-                    disabled={uploadingPoster}
-                  >
-                    Annuler
-                  </Button>
-                </div>
-              </div>
-            </div>
-            )}
-
-            {/* Liste des événements */}
-            <div className="space-y-4">
-              {events.map((event) => (
-                <div
-                  key={event.id}
-                  className="bg-brand-charcoal/50 border border-white/5 rounded-xl p-6"
-                >
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <h3 className="text-xl font-display font-bold text-white mb-2">
-                        {event.title}
-                      </h3>
-                      <p className="text-gray-400 mb-4 line-clamp-2">
-                        {event.description}
-                      </p>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
-                        <div className="text-gray-500">
-                          <span className="text-brand-green">Date:</span> {event.date}
-                        </div>
-                        <div className="text-gray-500">
-                          <span className="text-brand-green">Heure:</span> {event.time}
-                        </div>
-                        <div className="text-gray-500">
-                          <span className="text-brand-green">Lieu:</span> {event.location}
-                        </div>
-                        {event.registration_link && (
-                          <div className="text-gray-500">
-                            <span className="text-brand-green">Inscription:</span> 
-                            <a href={event.registration_link} target="_blank" rel="noopener noreferrer" className="text-brand-green hover:text-brand-accent ml-1">
-                              Lien disponible
-                            </a>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-2 ml-4">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => startEditEvent(event)}
-                        className="p-2"
-                      >
-                        <FaEdit className="text-brand-green" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => deleteEvent(event.id)}
-                        className="p-2"
-                      >
-                        <FaTrash className="text-red-400" />
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              ))}
             </div>
           </div>
         )}

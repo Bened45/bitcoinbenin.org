@@ -15,14 +15,15 @@ export default function Hero() {
   }, []);
 
   return (
-    <section className="relative min-h-screen text-white flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen w-screen text-white flex items-center justify-center overflow-hidden">
       {/* Background image optimisée */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0">
         <Image
           src="/hero.png"
           alt="Hero background"
           fill
           sizes="100vw"
+          className="object-cover"
           style={{ objectFit: 'cover', objectPosition: 'center' }}
           priority
           quality={75}
@@ -32,7 +33,7 @@ export default function Hero() {
       {/* Overlay avec gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/85 to-black/75 z-10"></div>
 
-      <div className="relative z-20 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-20">
+      <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mt-20">
         {/* Titre principal avec effet typewriter */}
         <div className="mb-6">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">

@@ -14,7 +14,7 @@ interface BlogHeroProps {
 export default function BlogHero({ tagCount = 0, postCount = 0 }: BlogHeroProps) {
   return (
     <PageTransition>
-      <section className="relative h-[80vh] md:h-[90vh] flex items-center justify-center overflow-hidden -mt-32 pt-32">
+      <section className="relative h-[95vh] md:h-screen flex items-center justify-center overflow-hidden pt-32">
         {/* Image de fond avec overlay */}
         <div className="absolute inset-0">
           <Image
@@ -33,19 +33,13 @@ export default function BlogHero({ tagCount = 0, postCount = 0 }: BlogHeroProps)
         </div>
 
         {/* Contenu Hero */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-brand-green/10 backdrop-blur-md border border-brand-green/30 rounded-full px-4 py-2 mb-6">
-              <FaBook className="text-brand-green" />
-              <span className="text-brand-green font-medium text-sm">
-                Restez informé
-              </span>
-            </div>
+          
 
             {/* Titre principal */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-white mb-6 leading-tight">

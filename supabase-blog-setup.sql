@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS blog_posts (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   title VARCHAR(255) NOT NULL,
   slug VARCHAR(255) UNIQUE NOT NULL,
-  excerpt TEXT NOT NULL,
+  excerpt TEXT NOT NULL, -- Supports Markdown format
   content TEXT NOT NULL,
   author_name VARCHAR(255) NOT NULL,
   author_image VARCHAR(500),
@@ -24,6 +24,13 @@ CREATE INDEX IF NOT EXISTS idx_blog_posts_tags ON blog_posts USING GIN(tags);
 
 -- RLS Policies
 ALTER TABLE blog_posts ENABLE ROW LEVEL SECURITY;
+
+-- Supprimer les politiques existantes avant de les recréer
+DROP POLICY IF EXISTS "Anyone can read published posts" ON blog_posts;
+DROP POLICY IF EXISTS "Authenticated users can read all posts" ON blog_posts;
+DROP POLICY IF EXISTS "Authenticated users can insert posts" ON blog_posts;
+DROP POLICY IF EXISTS "Authenticated users can update posts" ON blog_posts;
+DROP POLICY IF EXISTS "Authenticated users can delete posts" ON blog_posts;
 
 -- Everyone can read published posts
 CREATE POLICY "Anyone can read published posts"
@@ -74,7 +81,7 @@ CREATE TRIGGER update_blog_posts_updated_at
 INSERT INTO blog_posts (title, slug, excerpt, content, author_name, author_image, cover_image, status, tags, published_at) VALUES
 (
   'Comprendre Bitcoin : Guide pour les débutants au Bénin',
-  'comprendre-bitcoin-guide-debutants-benin',
+  'comprendre-bitcoin-guide-debutants-benin-v2',
   'Découvrez les bases de Bitcoin et comment commencer à utiliser la première cryptomonnaie mondiale au Bénin.',
   '
 # Comprendre Bitcoin : Guide pour les débutants au Bénin
@@ -119,7 +126,7 @@ Bitcoin représente une opportunité unique pour les Béninois de participer à 
 ),
 (
   'Comment accepter Bitcoin dans votre commerce au Bénin',
-  'accepter-bitcoin-commerce-benin',
+  'accepter-bitcoin-commerce-benin-v2',
   'Guide pratique pour les commerçants béninois souhaitant accepter Bitcoin comme moyen de paiement.',
   '
 # Comment accepter Bitcoin dans votre commerce au Bénin
@@ -165,11 +172,11 @@ Accepter Bitcoin est simple et peut attirer une nouvelle clientèle. Bitcoin Bé
   '/accepte.png',
   'published',
   ARRAY['commerce', 'paiement', 'guide'],
-  NOW() - INTERVAL '7 days'
+  NOW() - INTERVAL '7 day'
 ),
 (
   'Les événements Bitcoin Bénin à ne pas manquer en 2025',
-  'evenements-bitcoin-benin-2025',
+  'evenements-bitcoin-benin-2025-v2',
   'Découvrez tous les événements et rencontres de la communauté Bitcoin Bénin pour cette année.',
   '
 # Les événements Bitcoin Bénin à ne pas manquer en 2025

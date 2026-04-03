@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { createBlogPost, updateBlogPost, deleteBlogPost } from '../blog-actions';
 import Button from '@/app/components/ui/Button';
 import CoverImageUpload from '@/app/components/CoverImageUpload';
+import RichTextEditor from '@/app/components/RichTextEditor';
 import { FaPlus, FaTrash, FaEdit, FaBook, FaEye, FaEyeSlash } from 'react-icons/fa';
 
 interface BlogPost {
@@ -99,13 +100,25 @@ export default function AdminBlogPage() {
     setShowForm(false);
   };
 
-  const handleEdit = (post: BlogPost) => {
+  const handleEdit = async (post: BlogPost) => {
     setEditingPost(post);
+    
+    // Fetch full content when editing
+    let fullContent = '';
+    if (supabase) {
+      const { data } = await supabase
+        .from('blog_posts')
+        .select('content')
+        .eq('id', post.id)
+        .single();
+      fullContent = data?.content || '';
+    }
+    
     setFormData({
       title: post.title,
       slug: post.slug,
       excerpt: post.excerpt,
-      content: '', // Don't load full content for now
+      content: fullContent,
       author_name: post.author_name,
       cover_image_path: post.cover_image || '',
       tags: post.tags.join(', '),
@@ -133,6 +146,7 @@ export default function AdminBlogPage() {
           title: formData.title,
           slug: formData.slug,
           excerpt: formData.excerpt,
+          content: formData.content,
           author_name: formData.author_name,
           cover_image: coverImageUrl,
           tags: tagsArray,
@@ -143,7 +157,7 @@ export default function AdminBlogPage() {
           title: formData.title,
           slug: formData.slug,
           excerpt: formData.excerpt,
-          content: formData.content || 'Contenu à venir...',
+          content: formData.content || '<p>Contenu à venir...</p>',
           author_name: formData.author_name,
           author_image: '/logo.svg',
           cover_image: coverImageUrl,
@@ -263,6 +277,17 @@ export default function AdminBlogPage() {
                   className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-brand-green resize-none"
                   rows={3}
                   placeholder="Court résumé de l'article..."
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-300 mb-2">
+                  Contenu de l'article *
+                </label>
+                <RichTextEditor
+                  value={formData.content}
+                  onChange={(value) => setFormData({ ...formData, content: value })}
+                  placeholder="Rédigez votre article ici..."
                 />
               </div>
 

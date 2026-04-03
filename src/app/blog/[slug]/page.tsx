@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { ArrowLeft, Calendar, Tag } from 'lucide-react';
 import BlogList from '../../components/BlogList';
 import type { Metadata } from 'next';
+import '@/app/styles/blog-content.css';
 
 interface BlogPost {
   id: string;
@@ -141,9 +142,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
         {/* Content */}
         <div className="prose prose-lg prose-invert max-w-none">
-          <div 
-            className="text-gray-300 leading-relaxed space-y-6"
-            dangerouslySetInnerHTML={{ __html: formatContent(post.content) }}
+          <div
+            className="text-gray-300 leading-relaxed space-y-6 blog-content"
+            dangerouslySetInnerHTML={{ __html: post.content }}
           />
         </div>
 
@@ -178,17 +179,4 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       )}
     </main>
   );
-}
-
-function formatContent(content: string): string {
-  // Simple markdown-like formatting
-  return content
-    .replace(/^# (.*$)/gim, '<h1 class="text-3xl md:text-4xl font-bold text-white mt-8 mb-4">$1</h1>')
-    .replace(/^## (.*$)/gim, '<h2 class="text-2xl md:text-3xl font-bold text-white mt-6 mb-3">$1</h2>')
-    .replace(/^### (.*$)/gim, '<h3 class="text-xl md:text-2xl font-bold text-white mt-4 mb-2">$1</h3>')
-    .replace(/^\* (.*$)/gim, '<li class="ml-4">$1</li>')
-    .replace(/^\d+\. (.*$)/gim, '<li class="ml-4">$1</li>')
-    .replace(/\*\*(.*?)\*\*/gim, '<strong class="text-white font-semibold">$1</strong>')
-    .replace(/\*(.*?)\*/gim, '<em class="italic">$1</em>')
-    .replace(/\n/gim, '<br />');
 }

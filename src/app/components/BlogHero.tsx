@@ -1,9 +1,9 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { PageTransition } from './Animations';
-import Image from 'next/image';
-import { FaBook, FaTag, FaArrowRight } from 'react-icons/fa';
+import { FaBook, FaArrowRight } from 'react-icons/fa';
+import { AnimatedCounter, PageTransition } from '@/app/components/Animations';
+import blogHero from '/public/blog-hero.webp';
 import Link from 'next/link';
 
 interface BlogHeroProps {
@@ -17,13 +17,11 @@ export default function BlogHero({ tagCount = 0, postCount = 0 }: BlogHeroProps)
       <section className="relative h-[95vh] md:h-screen flex items-center justify-center overflow-hidden pt-32">
         {/* Image de fond avec overlay */}
         <div className="absolute inset-0">
-          <Image
-            src="/blog-hero.webp"
+          <img
+            src={blogHero.src}
             alt="Blog Bitcoin Bénin"
-            fill
-            className="object-cover"
-            priority
-            onError={(e) => {
+            className="w-full h-full object-cover"
+            onError={(e: React.SyntheticEvent<HTMLImageElement>) => {
               e.currentTarget.style.display = 'none';
               e.currentTarget.parentElement?.classList.add('bg-gradient-to-br', 'from-brand-dark', 'via-brand-charcoal', 'to-brand-dark');
             }}

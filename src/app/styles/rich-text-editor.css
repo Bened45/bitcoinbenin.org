@@ -1,0 +1,134 @@
+/* Rich text editor styles */
+.rich-text-editor .ql-toolbar {
+  border: none !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(30, 30, 40, 0.8) !important;
+  border-radius: 0.5rem 0.5rem 0 0 !important;
+  padding: 8px !important;
+}
+
+.rich-text-editor .ql-container {
+  border: none !important;
+  font-family: inherit !important;
+  font-size: 1rem !important;
+}
+
+.rich-text-editor .ql-editor {
+  color: #ffffff !important;
+  background: rgba(20, 20, 30, 0.6) !important;
+  min-height: 300px !important;
+  padding: 16px !important;
+}
+
+.rich-text-editor .ql-editor.ql-blank::before {
+  color: rgba(255, 255, 255, 0.3) !important;
+  font-style: normal !important;
+  left: 16px !important;
+  right: 16px !important;
+}
+
+.rich-text-editor .ql-snow .ql-stroke {
+  stroke: #e5e7eb !important;
+}
+
+.rich-text-editor .ql-snow .ql-fill {
+  fill: #e5e7eb !important;
+}
+
+.rich-text-editor .ql-snow .ql-picker-label {
+  color: #e5e7eb !important;
+}
+
+.rich-text-editor .ql-snow .ql-picker-options {
+  background: #1e1e28 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.rich-text-editor .ql-snow .ql-picker-options .ql-picker-label {
+  color: #e5e7eb !important;
+}
+
+.rich-text-editor .ql-snow .ql-active .ql-stroke {
+  stroke: #22c55e !important;
+}
+
+.rich-text-editor .ql-snow .ql-active .ql-fill {
+  fill: #22c55e !important;
+}
+
+.rich-text-editor .ql-snow .ql-active .ql-picker-label {
+  color: #22c55e !important;
+}
+
+.rich-text-editor .ql-snow .ql-toolbar button:hover .ql-stroke,
+.rich-text-editor .ql-snow .ql-toolbar .ql-picker-label:hover .ql-stroke,
+.rich-text-editor .ql-snow .ql-toolbar .ql-picker-item:hover .ql-stroke {
+  stroke: #22c55e !important;
+}
+
+.rich-text-editor .ql-snow .ql-toolbar button:hover .ql-fill,
+.rich-text-editor .ql-snow .ql-toolbar .ql-picker-label:hover .ql-fill,
+.rich-text-editor .ql-snow .ql-toolbar .ql-picker-item:hover .ql-fill {
+  fill: #22c55e !important;
+}
+
+.rich-text-editor .ql-snow .ql-toolbar button:hover,
+.rich-text-editor .ql-snow .ql-toolbar .ql-picker-label:hover,
+.rich-text-editor .ql-snow .ql-toolbar .ql-picker-item:hover {
+  color: #22c55e !important;
+}
+
+.rich-text-editor .ql-snow .ql-tooltip {
+  background: #1e1e28 !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  color: #e5e7eb !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+  z-index: 100 !important;
+}
+
+.rich-text-editor .ql-snow .ql-tooltip input[type='text'] {
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  background: rgba(20, 20, 30, 0.8) !important;
+  color: #ffffff !important;
+}
+
+.rich-text-editor .ql-snow .ql-tooltip a {
+  color: #22c55e !important;
+}
+
+.rich-text-editor .ql-snow .ql-tooltip::before {
+  color: #e5e7eb !important;
+}
+
+/* Quill content styling */
+.rich-text-editor .ql-editor h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.rich-text-editor .ql-editor h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.rich-text-editor .ql-editor h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+}
+
+.rich-text-editor .ql-editor blockquote {
+  border-left: 4px solid #22c55e;
+  padding-left: 1rem;
+  color: #9ca3af;
+  font-style: italic;
+}
+
+.rich-text-editor .ql-editor pre {
+  background: rgba(30, 30, 40, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}

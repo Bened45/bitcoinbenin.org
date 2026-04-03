@@ -61,6 +61,48 @@ CREATE POLICY "Authenticated users can delete posts"
   TO authenticated
   USING (true);
 
+-- Function to generate slug from title
+CREATE OR REPLACE FUNCTION generate_slug(title TEXT)
+RETURNS TEXT AS $$
+BEGIN
+  RETURN LOWER(
+    REGEXP_REPLACE(
+      REGEXP_REPLACE(
+        REGEXP_REPLACE(
+          REGEXP_REPLACE(title, '[^\w\s-]', '', 'g')
+        , '\s+', '-', 'g')
+      , '-+', '-', 'g')
+    , '^[-]|[-]$', '')
+  );
+END;
+$$ LANGUAGE plpgsql;
+
+-- Function to auto-generate slug on insert
+CREATE OR REPLACE FUNCTION set_blog_post_slug()
+RETURNS TRIGGER AS $$
+BEGIN
+  IF NEW.slug IS NULL OR NEW.slug = '' THEN
+    NEW.slug := generate_slug(NEW.title);
+    
+    -- Ensure uniqueness by adding number if needed
+    FOR i IN 1..10 LOOP
+      IF NOT EXISTS (SELECT 1 FROM blog_posts WHERE slug = NEW.slug AND id != COALESCE(NEW.id, '00000000-0000-0000-0000-000000000000'::uuid)) THEN
+        EXIT;
+      END IF;
+      NEW.slug := NEW.slug || '-' || i;
+    END LOOP;
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to auto-generate slug
+DROP TRIGGER IF EXISTS set_blog_post_slug_trigger ON blog_posts;
+CREATE TRIGGER set_blog_post_slug_trigger
+  BEFORE INSERT ON blog_posts
+  FOR EACH ROW
+  EXECUTE FUNCTION set_blog_post_slug();
+
 -- Function to update updated_at timestamp
 CREATE OR REPLACE FUNCTION update_blog_posts_updated_at()
 RETURNS TRIGGER AS $$

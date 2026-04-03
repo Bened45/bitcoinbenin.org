@@ -18,7 +18,7 @@ export default function BlogHero({ tagCount = 0, postCount = 0 }: BlogHeroProps)
         {/* Image de fond avec overlay */}
         <div className="absolute inset-0">
           <Image
-            src="/event-hero.webp"
+            src="/blog-hero.webp"
             alt="Blog Bitcoin Bénin"
             fill
             className="object-cover"
@@ -51,7 +51,7 @@ export default function BlogHero({ tagCount = 0, postCount = 0 }: BlogHeroProps)
 
             {/* Sous-titre */}
             <p className="text-lg md:text-xl lg:text-2xl text-gray-200 max-w-4xl mx-auto leading-relaxed mb-8">
-              Découvrez nos articles sur Bitcoin, la cryptomonnaie, et l'écosystème blockchain au Bénin.
+              Découvrez nos articles sur Bitcoin, la cryptomonnaie, et l'écosystème Bitcoin au Bénin.
               Apprenez, comprenez et adoptez Bitcoin en toute sécurité.
             </p>
 

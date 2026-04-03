@@ -27,6 +27,8 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'drive.google.com' },
       { protocol: 'https', hostname: 'lh3.googleusercontent.com' },
       { protocol: 'https', hostname: 'hgnwadiljauqbhsbtxkk.supabase.co' },
+      { protocol: 'https', hostname: 'www.bitcoinbenin.org' },
+      { protocol: 'https', hostname: 'bitcoinbenin.org' },
     ],
     formats: ['image/avif', 'image/webp'],
     qualities: [75, 85],

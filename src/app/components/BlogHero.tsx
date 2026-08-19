@@ -14,7 +14,7 @@ interface BlogHeroProps {
 export default function BlogHero({ tagCount = 0, postCount = 0 }: BlogHeroProps) {
   return (
     <PageTransition>
-      <section className="relative h-[80vh] md:h-[90vh] flex items-center justify-center overflow-hidden -mt-32 pt-32">
+      <section className="relative min-h-[80vh] md:min-h-[90vh] flex flex-col items-center justify-center overflow-hidden pt-40 md:pt-48 pb-32 md:pb-40">
         {/* Image de fond avec overlay */}
         <div className="absolute inset-0">
           <Image

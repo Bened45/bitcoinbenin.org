@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase, Album, GalleryImage } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
-import { createAlbum as createAlbumAction, deleteAlbum as deleteAlbumAction, updateAlbumCover, setFirstImageAsCover } from '../actions';
+import { createAlbum as createAlbumAction, deleteAlbum as deleteAlbumAction, updateAlbumCover, setFirstImageAsCover, updateAlbumExternalLink } from '../actions';
 import ImageUploadWithActions from '@/app/components/ImageUploadWithActions';
 import ImageGalleryWithActions from '@/app/components/ImageGalleryWithActions';
 import Button from '@/app/components/ui/Button';
@@ -14,7 +14,9 @@ export default function AdminGalleryPage() {
   const [selectedAlbum, setSelectedAlbum] = useState<string | null>(null);
   const [albumImages, setAlbumImages] = useState<GalleryImage[]>([]);
   const [showNewAlbumForm, setShowNewAlbumForm] = useState(false);
-  const [newAlbum, setNewAlbum] = useState({ name: '', description: '' });
+  const [editingExternalLink, setEditingExternalLink] = useState(false);
+  const [externalLinkInput, setExternalLinkInput] = useState('');
+  const [newAlbum, setNewAlbum] = useState({ name: '', description: '', external_link: '' });
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
@@ -67,11 +69,18 @@ export default function AdminGalleryPage() {
     if (!supabase) return;
     
     try {
-      const { data, error } = await supabase
+      let query = supabase
         .from('gallery_images')
         .select('*')
-        .eq('album_id', albumId)
         .order('created_at', { ascending: false });
+        
+      if (albumId === 'unassigned') {
+        query = query.is('album_id', null);
+      } else {
+        query = query.eq('album_id', albumId);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Erreur lors du chargement des images:', error);
@@ -90,10 +99,10 @@ export default function AdminGalleryPage() {
     }
 
     try {
-      const data = await createAlbumAction(newAlbum.name, newAlbum.description);
+      const data = await createAlbumAction(newAlbum.name, newAlbum.description, null, newAlbum.external_link);
       console.log('Album créé avec succès:', data);
       setAlbums([data, ...albums]);
-      setNewAlbum({ name: '', description: '' });
+      setNewAlbum({ name: '', description: '', external_link: '' });
       setShowNewAlbumForm(false);
     } catch (error) {
       console.error('Erreur lors de la création de l\'album:', error);
@@ -121,6 +130,16 @@ export default function AdminGalleryPage() {
       setAlbumImages([]);
     } else {
       setSelectedAlbum(albumId);
+      if (albumId === 'unassigned') {
+        setExternalLinkInput('');
+        setEditingExternalLink(false);
+      } else {
+        const album = albums.find(a => a.id === albumId);
+        if (album) {
+          setExternalLinkInput(album.external_link || '');
+          setEditingExternalLink(false);
+        }
+      }
       fetchAlbumImages(albumId);
     }
   };
@@ -167,6 +186,20 @@ export default function AdminGalleryPage() {
     if (!selectedAlbum) return false;
     const album = albums.find(a => a.id === selectedAlbum);
     return album?.cover_image === imagePath;
+  };
+
+  const handleUpdateExternalLink = async () => {
+    if (!selectedAlbum) return;
+    try {
+      const updatedAlbum = await updateAlbumExternalLink(selectedAlbum, externalLinkInput);
+      setAlbums(albums.map(album => 
+        album.id === selectedAlbum ? updatedAlbum : album
+      ));
+      setEditingExternalLink(false);
+      console.log('Lien externe mis à jour avec succès');
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour du lien externe:', error);
+    }
   };
 
   if (loading) {
@@ -242,6 +275,13 @@ export default function AdminGalleryPage() {
                     className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-2 text-white mb-3 focus:outline-none focus:border-brand-green resize-none"
                     rows={3}
                   />
+                  <input
+                    type="url"
+                    placeholder="Lien externe (ex: Google Drive pour plus de photos)"
+                    value={newAlbum.external_link}
+                    onChange={(e) => setNewAlbum({ ...newAlbum, external_link: e.target.value })}
+                    className="w-full bg-brand-dark border border-white/10 rounded-lg px-4 py-2 text-white mb-3 focus:outline-none focus:border-brand-green"
+                  />
                   <div className="flex gap-2">
                     <Button
                       variant="primary"
@@ -256,7 +296,7 @@ export default function AdminGalleryPage() {
                       size="sm"
                       onClick={() => {
                         setShowNewAlbumForm(false);
-                        setNewAlbum({ name: '', description: '' });
+                        setNewAlbum({ name: '', description: '', external_link: '' });
                       }}
                     >
                       Annuler
@@ -267,6 +307,22 @@ export default function AdminGalleryPage() {
 
               {/* Liste des albums */}
               <div className="space-y-2">
+                {/* Option Photos en vrac */}
+                <div
+                  className={`p-3 rounded-lg border cursor-pointer transition-all ${
+                    selectedAlbum === 'unassigned'
+                      ? 'bg-brand-green/20 border-brand-green'
+                      : 'bg-white/5 border-white/10 hover:bg-white/10'
+                  }`}
+                  onClick={() => handleAlbumSelect('unassigned')}
+                >
+                  <div className="flex items-center gap-2 mb-1">
+                    <FaImages className="text-gray-400" />
+                    <h3 className="font-display font-bold text-white">Photos générales (Sans album)</h3>
+                  </div>
+                  <p className="text-sm text-gray-400">Photos indépendantes non rattachées à un événement.</p>
+                </div>
+                
                 {albums.map((album) => (
                   <div
                     key={album.id}
@@ -316,15 +372,47 @@ export default function AdminGalleryPage() {
           <div className="lg:col-span-2">
             {selectedAlbum ? (
               <div className="bg-brand-charcoal/50 border border-white/5 rounded-xl p-6">
-                <h2 className="text-xl font-display font-bold text-white mb-6">
-                  {albums.find(a => a.id === selectedAlbum)?.name}
-                </h2>
+                <div className="flex flex-col mb-6">
+                  <h2 className="text-xl font-display font-bold text-white mb-2">
+                    {selectedAlbum === 'unassigned' ? 'Photos générales' : albums.find(a => a.id === selectedAlbum)?.name}
+                  </h2>
+                  {selectedAlbum !== 'unassigned' && (
+                    <div className="bg-white/5 p-4 rounded-lg border border-white/10 mt-2">
+                      <h3 className="text-sm font-bold text-gray-300 mb-2">Lien externe (ex: Google Drive pour la suite des photos)</h3>
+                      {editingExternalLink ? (
+                        <div className="flex gap-2">
+                          <input
+                            type="url"
+                            value={externalLinkInput}
+                            onChange={(e) => setExternalLinkInput(e.target.value)}
+                            placeholder="https://..."
+                            className="flex-1 bg-brand-dark border border-white/10 rounded px-3 py-1 text-sm text-white focus:outline-none focus:border-brand-green"
+                          />
+                          <Button variant="primary" size="sm" onClick={handleUpdateExternalLink}>Sauvegarder</Button>
+                          <Button variant="ghost" size="sm" onClick={() => setEditingExternalLink(false)}>Annuler</Button>
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm text-brand-green truncate max-w-xs">
+                            {albums.find(a => a.id === selectedAlbum)?.external_link || 'Aucun lien défini'}
+                          </span>
+                          <Button variant="ghost" size="sm" onClick={() => {
+                            setExternalLinkInput(albums.find(a => a.id === selectedAlbum)?.external_link || '');
+                            setEditingExternalLink(true);
+                          }}>
+                            Modifier
+                          </Button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
 
                 {/* Upload d'images */}
                 <div className="mb-8">
                   <ImageUploadWithActions 
                     onUploadComplete={handleImageUpload}
-                    albumId={selectedAlbum}
+                    albumId={selectedAlbum === 'unassigned' ? undefined : selectedAlbum}
                   />
                 </div>
 

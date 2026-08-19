@@ -37,7 +37,7 @@ export default function Header() {
         }
       `}>
 
-        <Link href="/" className="relative z-50 pl-2">
+        <Link href="/" className="relative z-50 pl-2" onClick={() => setIsMenuOpen(false)}>
           <div className="relative h-8 w-32 md:h-9 md:w-36">
             <Image
               src="/logo.svg"
@@ -101,16 +101,21 @@ export default function Header() {
           }`}
         style={{ top: '-100px', height: '140vh' }}
       >
-        {NAV_LINKS.map((link) => (
-          <Link
-            key={link.name}
-            href={link.href}
-            className="text-2xl font-bold text-gray-300 hover:text-brand-green transition-colors"
-            onClick={() => setIsMenuOpen(false)}
-          >
-            {link.name}
-          </Link>
-        ))}
+        {NAV_LINKS.map((link) => {
+          const isActive = pathname === link.href;
+          return (
+            <Link
+              key={link.name}
+              href={link.href}
+              className={`text-2xl font-bold transition-colors ${
+                isActive ? 'text-white' : 'text-gray-400 hover:text-brand-green'
+              }`}
+              onClick={() => setIsMenuOpen(false)}
+            >
+              {link.name}
+            </Link>
+          );
+        })}
 
         <div className="flex gap-4 mt-8">
           {SOCIAL_LINKS.map((link, index) => (

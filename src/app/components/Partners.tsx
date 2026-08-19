@@ -20,8 +20,8 @@ export default function Partners() {
   };
 
   const logoVariants = {
-    hidden: { opacity: 0, scale: 0.5 },
-    show: { opacity: 1, scale: 1, transition: { duration: 0.4, ease: easeOut } },
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeOut } },
   };
 
   return (
@@ -61,31 +61,25 @@ export default function Partners() {
           </div>
         </AnimatedWrapper>
 
-        <div className="mt-20 w-full overflow-hidden">
+        <div className="mt-16 w-full max-w-6xl mx-auto px-6 lg:px-8">
           <motion.div
-            className="flex w-max gap-8 px-6 lg:px-8"
+            className="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8 justify-items-center"
             variants={logoGridVariants}
-            animate={prefersReducedMotion ? undefined : { x: ['0%', '-33.33%'] }}
-            transition={
-              prefersReducedMotion
-                ? undefined
-                : { duration: 25, ease: 'linear', repeat: Infinity }
-            }
           >
-            {[...partners, ...partners, ...partners].map((partner, idx) => (
+            {partners.map((partner, idx) => (
               <motion.div
                 key={`${partner.name}-${idx}`}
-                className="flex items-center justify-center p-6 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl hover:bg-white/10 hover:border-brand-green/30 transition-all duration-500 transform hover:scale-105 group shrink-0"
+                className="w-full max-w-[200px] flex items-center justify-center p-2 group cursor-pointer"
                 variants={logoVariants}
                 whileHover={{ y: -5 }}
               >
-                <div className="flex items-center justify-center w-44 h-20 bg-white/90 rounded-xl px-4 py-3">
+                <div className="flex items-center justify-center w-full h-24 bg-white rounded-xl px-4 py-3 shadow-sm group-hover:shadow-[0_0_20px_rgba(34,197,94,0.15)] group-hover:border-brand-green/40 border border-transparent transition-all duration-300">
                   <Image
                     src={partner.logo}
                     alt={`${partner.name} logo`}
                     width={140}
                     height={80}
-                    className="object-contain w-auto h-auto max-w-full max-h-full"
+                    className="object-contain w-auto h-auto max-w-full max-h-full transition-transform duration-500"
                   />
                 </div>
               </motion.div>

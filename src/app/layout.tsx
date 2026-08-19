@@ -2,7 +2,15 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import AccessibilityPreferences from "./components/AccessibilityPreferences";
 import LayoutShell from "./components/LayoutShell";
+import ScrollToTop from "./components/ScrollToTop";
 import "./globals.css";
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ 
+  subsets: ['latin'], 
+  variable: '--font-inter', 
+  display: 'swap' 
+});
 
 export const metadata: Metadata = {
   title: {
@@ -45,15 +53,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="fr" className="scroll-smooth">
+    <html lang="fr" className={`scroll-smooth ${inter.variable}`}>
       <head>
         <link rel="preconnect" href="https://hgnwadiljauqbhsbtxkk.supabase.co" />
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
         <style dangerouslySetInnerHTML={{
           __html: `
-            body{color:#f8fafc;background:#020617;font-family:'Inter',sans-serif;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+            body{color:#f8fafc;background:#020617;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
             ::-webkit-scrollbar{width:8px}
             ::-webkit-scrollbar-track{background:#020617}
             ::-webkit-scrollbar-thumb{background:#334155;border-radius:4px}
@@ -70,7 +76,7 @@ export default function RootLayout({
           `
         }} />
       </head>
-      <body className="font-sans bg-brand-dark text-gray-300 antialiased selection:bg-brand-green selection:text-white overflow-x-hidden" style={{ fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif' }}>
+      <body className="font-sans bg-brand-dark text-gray-300 antialiased selection:bg-brand-green selection:text-white overflow-x-hidden">
         <Script
           id="structured-data"
           type="application/ld+json"
@@ -95,10 +101,10 @@ export default function RootLayout({
             ]),
           }}
         />
-        {/* Simple Background */}
         <div className="fixed inset-0 z-[-1] bg-premium-gradient"></div>
         <div className="fixed top-0 left-0 w-full h-[500px] bg-brand-green/5 blur-[120px] rounded-full translate-y-[-50%] pointer-events-none opacity-40"></div>
 
+        <ScrollToTop />
         <LayoutShell>
           {children}
         </LayoutShell>

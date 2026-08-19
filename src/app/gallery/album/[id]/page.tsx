@@ -3,7 +3,7 @@
 import { useState, useEffect, use, useCallback } from 'react';
 import { supabase, GalleryImage, Album } from '@/lib/supabase';
 import Link from 'next/link';
-import { FaArrowLeft, FaCalendarAlt, FaDownload, FaExpand } from 'react-icons/fa';
+import { FaArrowLeft, FaCalendarAlt, FaDownload, FaExpand, FaExternalLinkAlt } from 'react-icons/fa';
 import ImageLightbox from '@/app/components/ImageLightbox';
 import OptimizedImage from '@/app/components/OptimizedImage';
 
@@ -135,6 +135,19 @@ export default function AlbumPage({ params }: AlbumPageProps) {
                 {images.length} photo{images.length > 1 ? 's' : ''}
               </div>
             </div>
+            {album.external_link && (
+              <div className="mt-6 flex justify-center">
+                <a
+                  href={album.external_link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 bg-brand-green text-black font-bold px-6 py-3 rounded-lg hover:bg-brand-accent transition-colors"
+                >
+                  <FaExternalLinkAlt />
+                  Voir toutes les photos
+                </a>
+              </div>
+            )}
           </div>
         </div>
 

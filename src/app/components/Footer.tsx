@@ -14,7 +14,7 @@ const Footer = () => {
         {/* Glow Effects */}
         <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-brand-orange/5 blur-[150px] rounded-full pointer-events-none -translate-y-1/2 translate-x-1/2"></div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 lg:gap-24 relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 relative z-10">
 
           {/* Brand Column (Left) - Span 4 */}
           <div className="lg:col-span-4 flex flex-col gap-8">

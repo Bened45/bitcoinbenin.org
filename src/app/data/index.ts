@@ -42,6 +42,7 @@ export const NAV_LINKS = [
   { name: ' Blog', href: '/blog' },
   { name: ' Ressources', href: '/NosRessources' },
   { name: ' Galerie', href: '/gallery' },
+  { name: ' Commerces', href: '/commerces' },
   { name: 'Accepter Bitcoin', href: '/accepter-bitcoin' },
 ];
 

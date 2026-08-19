@@ -108,7 +108,7 @@ export async function getAllTags(): Promise<string[]> {
 
   const allTags = new Set<string>();
   data?.forEach(post => {
-    post.tags?.forEach(tag => allTags.add(tag));
+    post.tags?.forEach((tag: string) => allTags.add(tag));
   });
 
   return Array.from(allTags).sort();

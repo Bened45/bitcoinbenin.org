@@ -72,6 +72,7 @@ export interface Album {
   name: string
   description?: string
   cover_image?: string
+  external_link?: string
   created_at: string
   updated_at: string
 }

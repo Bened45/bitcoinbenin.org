@@ -102,7 +102,7 @@ export default function GalleryPage() {
             </span>
           </h1>
           <p className="text-xl text-gray-400 max-w-2xl mx-auto">
-            Explorez les albums photos de nos événements, meetups et activités communautaires.
+            Découvrez quelques photos de nos événements, meetups et activités communautaires.
           </p>
         </div>
 
@@ -152,17 +152,17 @@ export default function GalleryPage() {
         <section>
           <div className="flex items-center gap-3 mb-4">
             <FaImages className="text-2xl text-brand-green" />
-            <h2 className="text-2xl font-display font-bold text-white">Albums</h2>
+            <h2 className="text-2xl font-display font-bold text-white">Événements passés</h2>
           </div>
 
           {albums.length === 0 ? (
             <div className="text-center py-16">
               <FaImages className="text-6xl text-gray-400 mx-auto mb-4" />
               <h3 className="text-xl font-display font-bold text-white mb-2">
-                Aucun album pour le moment
+                Aucun événement pour le moment
               </h3>
               <p className="text-gray-400">
-                Les albums photos seront bientôt disponibles.
+                Les photos de nos événements seront bientôt disponibles.
               </p>
             </div>
           ) : (

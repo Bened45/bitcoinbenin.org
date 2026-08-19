@@ -28,7 +28,7 @@ export default function GalleryPreview() {
         .from('gallery_images')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(6);
+        .limit(15);
 
       if (error) {
         console.error('Erreur lors du chargement des images:', error);
@@ -93,47 +93,63 @@ export default function GalleryPreview() {
           </Link>
         </div>
 
-        {/* Grid d'images récentes */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-8">
-          {recentImages.slice(0, 6).map((image) => (
-            <div
-              key={image.id}
-              className="group relative aspect-square rounded-xl overflow-hidden bg-brand-dark/50 border border-white/5 hover:border-brand-green/30 transition-all duration-300"
-            >
-              <Image
-                src={getImageUrl(image.file_path)}
-                alt={image.title}
-                fill
-                className="object-cover transition-transform duration-300 group-hover:scale-105"
-              />
-              
-              {/* Overlay */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-4 left-4 right-4">
-                  <p className="text-white text-sm font-medium truncate">{image.title}</p>
-                  {image.event_date && (
-                    <p className="text-brand-green text-xs">
-                      {new Date(image.event_date).toLocaleDateString('fr-FR', {
-                        day: 'numeric',
-                        month: 'short',
-                        year: 'numeric'
-                      })}
-                    </p>
-                  )}
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        {/* Grid d'images récentes (Staggered Layout) */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-16 pt-8 pb-12 max-w-6xl mx-auto">
+          {recentImages.slice(0, 4).map((image, index) => {
+            // Calcul des décalages pour reproduire l'effet de l'image
+            let translateY = '';
+            if (index === 0) translateY = 'md:translate-y-12 translate-y-4';
+            else if (index === 1) translateY = 'md:-translate-y-8 -translate-y-2';
+            else if (index === 2) translateY = 'md:translate-y-4 translate-y-6';
+            else if (index === 3) translateY = 'md:translate-y-16 -translate-y-4';
 
-        {/* Bouton voir plus */}
-        <div className="text-center">
-          <Link href="/gallery">
-            <Button variant="outline" size="lg" className="inline-flex items-center gap-2">
-              Explorer toutes les photos
-              <FaArrowRight className="text-sm" />
-            </Button>
-          </Link>
+            const isLast = index === 3;
+            const showOverlay = isLast && recentImages.length > 4;
+            const remainingCount = recentImages.length - 3;
+
+            return (
+              <Link 
+                href="/gallery" 
+                key={image.id}
+                className={`group relative aspect-[9/16] md:aspect-[3/5] rounded-3xl overflow-hidden bg-brand-dark/50 border border-white/10 hover:border-brand-green/50 transition-all duration-500 hover:shadow-[0_0_40px_rgba(34,197,94,0.15)] ${translateY}`}
+              >
+                <Image
+                  src={getImageUrl(image.file_path)}
+                  alt={image.title}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                />
+                
+                {/* Overlay gradient */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+                
+                {/* Texte et infos */}
+                {!showOverlay && (
+                  <div className="absolute bottom-0 left-0 right-0 p-5 translate-y-4 group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                    <p className="text-white text-sm md:text-base font-bold truncate drop-shadow-md mb-1">{image.title}</p>
+                    {image.event_date && (
+                      <p className="text-brand-green text-xs md:text-sm font-semibold drop-shadow-md">
+                        {new Date(image.event_date).toLocaleDateString('fr-FR', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric'
+                        })}
+                      </p>
+                    )}
+                  </div>
+                )}
+
+                {/* Overlay pour la dernière image s'il y a plus de 4 photos */}
+                {showOverlay && (
+                  <div className="absolute inset-0 bg-black/40 backdrop-blur-[2px] flex items-center justify-center transition-all duration-300 group-hover:bg-black/60 group-hover:backdrop-blur-sm">
+                    <span className="text-white text-4xl md:text-5xl font-black drop-shadow-2xl">
+                      +{remainingCount}
+                    </span>
+                  </div>
+                )}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </section>

@@ -2,7 +2,7 @@
 
 import { supabaseAdmin } from '@/lib/supabase';
 
-export async function createAlbum(name, description, coverImage) {
+export async function createAlbum(name, description, coverImage, externalLink) {
   if (!supabaseAdmin) {
     throw new Error('Supabase admin n\'est pas configuré');
   }
@@ -12,7 +12,8 @@ export async function createAlbum(name, description, coverImage) {
     .insert({
       name,
       description: description || null,
-      cover_image: coverImage || null
+      cover_image: coverImage || null,
+      external_link: externalLink || null
     })
     .select()
     .single();
@@ -41,6 +42,28 @@ export async function updateAlbumCover(albumId, coverImagePath) {
 
   if (error) {
     throw new Error(`Erreur lors de la mise à jour de la couverture: ${error.message}`);
+  }
+
+  return data;
+}
+
+export async function updateAlbumExternalLink(albumId, externalLink) {
+  if (!supabaseAdmin) {
+    throw new Error('Supabase admin n\'est pas configuré');
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from('albums')
+    .update({
+      external_link: externalLink || null,
+      updated_at: new Date().toISOString()
+    })
+    .eq('id', albumId)
+    .select()
+    .single();
+
+  if (error) {
+    throw new Error(`Erreur lors de la mise à jour du lien externe: ${error.message}`);
   }
 
   return data;
@@ -176,7 +199,7 @@ export async function addImageToGallery(file, albumId) {
         file_path: filePath,
         file_size: file.size,
         content_type: file.type,
-        album_id: albumId,
+        album_id: albumId || null,
         event_date: new Date().toISOString().split('T')[0],
         tags: ['bitcoin-benin', 'event']
       })

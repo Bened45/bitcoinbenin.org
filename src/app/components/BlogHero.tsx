@@ -18,7 +18,7 @@ export default function BlogHero({ tagCount = 0, postCount = 0 }: BlogHeroProps)
         {/* Image de fond avec overlay */}
         <div className="absolute inset-0">
           <Image
-            src="/event-hero.webp"
+            src="/blog-hero.jpg"
             alt="Blog Bitcoin Bénin"
             fill
             className="object-cover"
@@ -39,13 +39,7 @@ export default function BlogHero({ tagCount = 0, postCount = 0 }: BlogHeroProps)
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
           >
-            {/* Badge */}
-            <div className="inline-flex items-center gap-2 bg-brand-green/10 backdrop-blur-md border border-brand-green/30 rounded-full px-4 py-2 mb-6">
-              <FaBook className="text-brand-green" />
-              <span className="text-brand-green font-medium text-sm">
-                Restez informé
-              </span>
-            </div>
+
 
             {/* Titre principal */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-black text-white mb-6 leading-tight">

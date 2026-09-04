@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FaMapMarkerAlt, FaWhatsapp, FaExternalLinkAlt, FaBitcoin, FaTag, FaSearch, FaMap } from 'react-icons/fa';
+import { supabase } from '@/lib/supabase';
 
 // Fausse base de données pour valider le design
 const DUMMY_MERCHANTS = [
@@ -52,8 +54,43 @@ const CATEGORIES = ['Tous', 'Restauration', 'Boutique', 'Hébergement', 'Service
 export default function CommercesPage() {
   const [activeCategory, setActiveCategory] = useState('Tous');
   const [searchQuery, setSearchQuery] = useState('');
+  const [merchants, setMerchants] = useState(DUMMY_MERCHANTS);
+  const [loading, setLoading] = useState(true);
 
-  const filteredMerchants = DUMMY_MERCHANTS.filter(merchant => {
+  useEffect(() => {
+    async function fetchMerchants() {
+      if (!supabase) return setLoading(false);
+      try {
+        const { data, error } = await supabase.from('merchants').select('*').order('created_at', { ascending: false });
+        if (error) throw error;
+        
+        if (data && data.length > 0) {
+          // Map database snake_case to our component structure
+          const formatted = data.map((item: any) => ({
+            id: item.id,
+            name: item.name,
+            category: item.category,
+            description: item.description,
+            address: item.address,
+            city: item.city,
+            btcMapUrl: item.btc_map_url || '#',
+            contactUrl: item.contact_url || '#',
+            imageUrl: item.image_url,
+            discount: item.discount,
+            tags: item.tags || []
+          }));
+          setMerchants(formatted);
+        }
+      } catch (err) {
+        console.error('Erreur lors de la récupération des commerces:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchMerchants();
+  }, []);
+
+  const filteredMerchants = merchants.filter(merchant => {
     const matchesCategory = activeCategory === 'Tous' || merchant.category === activeCategory;
     const matchesSearch = merchant.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
                           merchant.city.toLowerCase().includes(searchQuery.toLowerCase());
@@ -64,17 +101,23 @@ export default function CommercesPage() {
     <main className="min-h-screen bg-brand-dark pb-24">
       {/* ─── HERO SECTION ──────────────────────────────── */}
       <section className="relative overflow-hidden pt-56 md:pt-64 pb-20 md:pb-28">
-        {/* Animated background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-brand-dark via-[#1a0e00] to-brand-dark" />
-        <motion.div 
-          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-orange/8 rounded-full blur-[150px] pointer-events-none"
-          animate={{ scale: [1, 1.2, 1], opacity: [0.4, 0.6, 0.4] }}
+        {/* Photo de fond avec overlay */}
+        <div className="absolute inset-0">
+          <Image
+            src="/commerce-hero.jpg?v=2"
+            alt="Commerces Bitcoin Bénin"
+            fill
+            className="object-cover"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/55 to-brand-dark" />
+        </div>
+
+        {/* Glow vert subtil */}
+        <motion.div
+          className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-brand-green/10 rounded-full blur-[150px] pointer-events-none"
+          animate={{ scale: [1, 1.2, 1], opacity: [0.3, 0.5, 0.3] }}
           transition={{ duration: 6, repeat: Infinity, ease: 'easeInOut' }}
-        />
-        <motion.div 
-          className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-amber-500/5 rounded-full blur-[120px] pointer-events-none"
-          animate={{ scale: [1, 1.15, 1], opacity: [0.3, 0.5, 0.3] }}
-          transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut', delay: 2 }}
         />
 
         {/* Large faded Bitcoin symbol */}
@@ -83,7 +126,7 @@ export default function CommercesPage() {
             initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
             animate={{ opacity: 0.04, scale: 1, rotate: 0 }}
             transition={{ duration: 1.5, ease: 'easeOut' }}
-            className="text-brand-orange"
+            className="text-brand-green"
           >
             <FaBitcoin size={500} />
           </motion.div>
@@ -96,13 +139,10 @@ export default function CommercesPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7 }}
           >
-            <div className="inline-flex items-center justify-center gap-2 px-5 py-2.5 bg-brand-orange/10 text-brand-orange border border-brand-orange/30 rounded-full text-sm font-bold mb-8 backdrop-blur-sm">
-              <FaBitcoin className="text-lg animate-pulse" /> Adoption Circulaire
-            </div>
 
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 tracking-tight leading-[1.1]">
               Dépensez vos{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-orange via-amber-400 to-brand-orange">
+              <span className="text-brand-green">
                 Bitcoin
               </span>
               <br className="hidden md:block" /> au Bénin
@@ -132,7 +172,7 @@ export default function CommercesPage() {
                   placeholder="Rechercher un commerce, une ville..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full bg-brand-dark/80 border border-white/10 rounded-2xl py-4 pl-14 pr-5 text-white text-lg focus:outline-none focus:border-brand-orange/60 focus:shadow-[0_0_20px_rgba(247,147,26,0.1)] transition-all placeholder:text-gray-500"
+                  className="w-full bg-brand-dark/80 border border-white/10 rounded-2xl py-4 pl-14 pr-5 text-white text-lg focus:outline-none focus:border-brand-green/60 focus:shadow-[0_0_20px_rgba(247,147,26,0.1)] transition-all placeholder:text-gray-500"
                 />
               </div>
 
@@ -144,7 +184,7 @@ export default function CommercesPage() {
                     onClick={() => setActiveCategory(category)}
                     className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
                       activeCategory === category 
-                        ? 'bg-brand-orange text-white shadow-lg shadow-brand-orange/25' 
+                        ? 'bg-brand-green text-white shadow-lg shadow-brand-green/25' 
                         : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white border border-white/5'
                     }`}
                   >
@@ -169,16 +209,16 @@ export default function CommercesPage() {
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
                 transition={{ duration: 0.3 }}
-                className="bg-brand-charcoal/30 border border-white/10 rounded-3xl overflow-hidden flex flex-col group hover:border-brand-orange/50 hover:shadow-[0_0_30px_rgba(247,147,26,0.1)] transition-all"
+                className="bg-brand-charcoal/30 border border-white/10 rounded-3xl overflow-hidden flex flex-col group hover:border-brand-green/50 hover:shadow-[0_0_30px_rgba(247,147,26,0.1)] transition-all"
               >
                 {/* Image Cover */}
                 <div className="relative h-56 w-full overflow-hidden bg-brand-dark">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
+                  <Image 
                     src={merchant.imageUrl}
                     alt={merchant.name}
-                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                    loading="lazy"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    className="object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-brand-charcoal via-transparent to-transparent opacity-90"></div>
                   
@@ -192,18 +232,18 @@ export default function CommercesPage() {
                 <div className="p-6 flex-1 flex flex-col">
                   
                   <div className="flex justify-between items-start mb-2">
-                    <h2 className="text-2xl font-black text-white group-hover:text-brand-orange transition-colors">
+                    <h2 className="text-2xl font-black text-white group-hover:text-brand-green transition-colors">
                       {merchant.name}
                     </h2>
                   </div>
 
                   <div className="flex items-center gap-2 text-gray-400 text-sm mb-4">
-                    <FaMapMarkerAlt className="text-brand-orange" />
+                    <FaMapMarkerAlt className="text-brand-green" />
                     <span>{merchant.address}, <strong className="text-white">{merchant.city}</strong></span>
                   </div>
 
                   {merchant.discount && (
-                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-orange/10 border border-brand-orange/20 rounded-lg text-brand-orange text-xs font-bold mb-4 w-fit">
+                    <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-brand-green/10 border border-brand-green/20 rounded-lg text-brand-green text-xs font-bold mb-4 w-fit">
                       <FaTag /> {merchant.discount}
                     </div>
                   )}
@@ -256,7 +296,7 @@ export default function CommercesPage() {
             </p>
             <a 
               href="/accepter-bitcoin"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-brand-orange text-white rounded-xl font-bold hover:bg-orange-600 transition-colors shadow-lg shadow-brand-orange/20"
+              className="inline-flex items-center gap-2 px-8 py-4 bg-brand-orange text-white rounded-xl font-bold hover:bg-brand-green-dark transition-colors shadow-lg shadow-brand-orange/20"
             >
               Ajouter mon commerce <FaExternalLinkAlt />
             </a>

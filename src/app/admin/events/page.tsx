@@ -375,7 +375,7 @@ export default function AdminEventsPage() {
         <div className="mb-12">
           <h1 className="text-4xl md:text-5xl font-display font-black text-white mb-4">
             Gestion des 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-brand-electric ml-3">
+            <span className="text-brand-green ml-3">
               Événements
             </span>
           </h1>

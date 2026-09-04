@@ -4,16 +4,16 @@ import { FaFacebook, FaLinkedin, FaTwitter } from "react-icons/fa";
 import { motion, easeOut } from 'framer-motion';
 
 const membres = [
-  { nom: "Alphonse Mehounme", image: "/alphonse.jpg", linkedin: "https://www.linkedin.com/in/alphonsemehounme?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", twitter: "https://x.com/mehounme" },
-  { nom: "Loïc Kassa", image: "/loic.jpg", linkedin: "https://www.linkedin.com/in/loickassa/", twitter: "https://x.com/Loicbtc", facebook: "https://www.facebook.com/loicbtc" },
-  { nom: "Samadou Salahou", image: "/samade.jpg", linkedin: "#", twitter: "https://x.com/samadousalahou", facebook: "https://www.facebook.com/Samadousalahou" },
-  { nom: "Abdoul Ouadoud", image: "/speaker17.3ac5cb2e.svg", linkedin: "", twitter: "https://bento.me/abdoul-ouadoud", facebook: "https://www.facebook.com/abdoulouadoud.bouraima" },
+  { nom: "Alphonse Mehounme", image: "/alphonse.webp", linkedin: "https://www.linkedin.com/in/alphonsemehounme?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", twitter: "https://x.com/mehounme" },
+  { nom: "Loïc Kassa", image: "/loic.webp", linkedin: "https://www.linkedin.com/in/loickassa/", twitter: "https://x.com/Loicbtc", facebook: "https://www.facebook.com/loicbtc" },
+  { nom: "Samadou Salahou", image: "/samade.webp", linkedin: "#", twitter: "https://x.com/samadousalahou", facebook: "https://www.facebook.com/Samadousalahou" },
+  { nom: "Abdoul Ouadoud", image: "/abdoul.webp", linkedin: "", twitter: "https://bento.me/abdoul-ouadoud", facebook: "https://www.facebook.com/abdoulouadoud.bouraima" },
   { nom: "Ramane Boda", image: "/raman.jpg", linkedin: "https://www.linkedin.com/in/abdoul-rahamane-boda-78b829209?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", twitter: "https://x.com/Ramane_Boda?t=A6iRSZcqFvEpW1dAH2yryg&s=09", facebook: "https://www.facebook.com/Ramane.boda" },
-  { nom: "Wilfried SOTODJI", image: "/will.jpeg", linkedin: "https://www.linkedin.com/in/wilfried-sotodji-42556a217?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/willy_btc", facebook: "https://www.facebook.com/MarxWilfriedS" },
-  { nom: "Béni-Christ Edaye Dokoui", image: "/beni.jpg", linkedin: "https://www.linkedin.com/in/mahougnon-b%C3%A9ni-christ-edaye-dokoui-254131336/", twitter: "https://x.com/BenedBTC", facebook: "https://www.facebook.com/beni.christ.edaye.dokoui.2025" },
+  { nom: "Wilfried SOTODJI", image: "/will.webp", linkedin: "https://www.linkedin.com/in/wilfried-sotodji-42556a217?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "https://x.com/willy_btc", facebook: "https://www.facebook.com/MarxWilfriedS" },
+  { nom: "Béni-Christ Edaye Dokoui", image: "/beni.png", linkedin: "https://www.linkedin.com/in/mahougnon-b%C3%A9ni-christ-edaye-dokoui-254131336/", twitter: "https://x.com/BenedBTC", facebook: "https://www.facebook.com/beni.christ.edaye.dokoui.2025" },
   { nom: "Abdias Olaniran Afouda", image: "/abdias.svg", linkedin: "https://www.linkedin.com/in/abdias-afouda-06461022a?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=ios_app", twitter: "x.com/heyolaniran", facebook: "https://www.facebook.com/laurentAb143" },
   { nom: "Joseph QUAYE", image: "/jo.jpeg", linkedin: "https://www.linkedin.com/in/joseph-quaye-1170041b1/", twitter: "https://x.com/Jobitcoiner", facebook: "https://www.facebook.com/" },
-  { nom: "Marshal Dekon", image: "/marshal.jpeg", facebook: "https://www.facebook.com/romeo.ken.9659?mibextid=rS40aB7S9Ucbxw6v", twitter: "https://x.com/MarshalOS_btc" },
+  { nom: "Marshal Dekon", image: "/marshal.jpg", facebook: "https://www.facebook.com/romeo.ken.9659?mibextid=rS40aB7S9Ucbxw6v", twitter: "https://x.com/MarshalOS_btc" },
   { nom: "Carlos Adimou", image: "/carlos.jpeg", linkedin: "https://www.linkedin.com/in/carlos-adimou?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", twitter: "https://x.com/CarlAdm04?t=ElCMdZbrohO16J6UzWS13w&s=09" },
   { nom: "Geoffroy Acakpo", image: "/geo.jpg", linkedin: "https://www.linkedin.com/in/g%C3%A9offroy-acakpo-a12a77252?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app", twitter: "https://x.com/iamgeoffroy", facebook: "https://www.facebook.com/share/1DKDaaJsR2/" },
 ];

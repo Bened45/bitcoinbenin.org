@@ -7,6 +7,7 @@ import Testimonials from "./Testimonials";
 import GalleryPreview from "./GalleryPreview";
 import Partners from "./Partners";
 import EventModal from "./EventModal";
+import HubSection from "./HubSection";
 import { useEventModal } from "../hooks/useEventModal";
 import { PageTransition } from "./Animations";
 
@@ -19,6 +20,7 @@ export default function HomePage() {
         <Hero />
         <Mission />
         <JoinUs />
+        <HubSection />
         <GalleryPreview />
         <Testimonials />
         <Partners />
@@ -31,6 +33,7 @@ export default function HomePage() {
       <Hero />
       <Mission />
       <JoinUs />
+      <HubSection />
       <GalleryPreview />
       <Testimonials />
       <Partners />

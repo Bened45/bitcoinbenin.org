@@ -5,25 +5,25 @@ import { motion, easeOut, easeIn } from 'framer-motion';
 export default function Communautesection2() {
   const events = [
     {
-      date: "27/01/2024",
-      title: "Premier meet-up",
-      description: '"Bitcoin Bénin" '
-    },
-    {
-      date: "15/11/2025",
-      title: "Dernier meet-up",
-      description: '"Bitcoin Talks Bénin" (bloc 503 212)'
-    },
-    {
-      date: "16/06/2022",
-      title: "Relance de la communauté",
-      description: "Bitcoin à Cotonou (bloc 741 061)"
-    },
-    {
-      date: "31/05/2023",
+      date: "2021",
       title: "Création de la communauté",
-      description: "Bitcoin Bénin (bloc 792 277)"
+      description: "Naissance du mouvement et premières initiatives pour démocratiser Bitcoin au Bénin."
     },
+    {
+      date: "2021",
+      title: "1er Bitcoin Mastermind",
+      description: "Première édition réunissant les passionnés et acteurs de l'écosystème."
+    },
+    {
+      date: "27 Janvier 2024",
+      title: "Premier meet-up",
+      description: "Premier rassemblement physique officiel de la communauté Bitcoin Bénin."
+    },
+    {
+      date: "05 Juillet 2026",
+      title: "Inauguration du Bitcoin Benin HUB",
+      description: "Ouverture de notre espace communautaire lors du BMM 2026."
+    }
   ];
 
   const titleVariants = {

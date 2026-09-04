@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import { clearSupabaseSession } from '@/lib/supabase';
-import { FaImages, FaCalendarAlt, FaSchool, FaSignOutAlt, FaChartLine, FaBars, FaTimes, FaChevronLeft, FaChevronRight, FaBook } from 'react-icons/fa';
+import { FaImages, FaCalendarAlt, FaSchool, FaSignOutAlt, FaChartLine, FaBars, FaTimes, FaChevronLeft, FaChevronRight, FaBook, FaStore } from 'react-icons/fa';
 
 interface AdminSidebarProps {
   isCollapsed: boolean;
@@ -33,6 +33,7 @@ export default function AdminSidebar({ isCollapsed, onToggle, isOpenMobile, onTo
     { name: 'Blog', href: '/admin/blog', icon: FaBook },
     { name: 'Événements', href: '/admin/events', icon: FaCalendarAlt },
     { name: 'Bitcoin School', href: '/admin/bitcoin-school', icon: FaSchool },
+    { name: 'Commerces', href: '/admin/commerces', icon: FaStore },
   ];
 
   return (

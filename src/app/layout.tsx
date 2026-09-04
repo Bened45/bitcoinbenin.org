@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { Analytics } from '@vercel/analytics/next';
 import AccessibilityPreferences from "./components/AccessibilityPreferences";
 import LayoutShell from "./components/LayoutShell";
 import ScrollToTop from "./components/ScrollToTop";
@@ -109,6 +110,7 @@ export default function RootLayout({
           {children}
         </LayoutShell>
         <AccessibilityPreferences />
+        <Analytics />
       </body>
     </html>
   );
